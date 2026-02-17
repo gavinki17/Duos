@@ -1,3 +1,5 @@
+// Rocket league api stats grabber
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -176,7 +178,7 @@
 
 <script>
     async function fetchStats(playerID) {
-        const url = `https://rocket-league1.p.rapidapi.com/ranks/${playerID}`;
+        const url = "https://rocket-league1.p.rapidapi.com/ranks/" + playerID;
         const options = {
             method: 'GET',
             headers: {
