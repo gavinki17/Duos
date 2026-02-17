@@ -1,24 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Fortnite Duo Synergy Analyzer</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL Duo Synergy Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0072ff;
+            --secondary: #00c6ff;
+            --accent: #facc15;
+            --bg: #0b0e14;
+            --card: #161b22;
+            --text: #f0f6fc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b0e14 100%);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card);
+            border: 1px solid #30363d;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        h1 { font-weight: 800; font-size: 2.5rem; margin-bottom: 10px; color: var(--text); }
+        .subtitle { color: #8b949e; margin-bottom: 30px; }
+
+        /* Input Area */
+        .inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        input {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 1rem;
+            width: 250px;
+            transition: all 0.3s;
+        }
+
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 114, 255, 0.2); }
+
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        /* Comparison Display */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 80px 1fr;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            display: none; /* Hidden until search */
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid #30363d;
+        }
+
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--secondary); }
+        .stat-label { font-size: 0.8rem; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; }
+
+        .vs-badge {
+            background: var(--bg);
+            border: 2px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-style: italic;
+            margin: 0 auto;
+        }
+
+        /* Synergy Result */
+        .synergy-box {
+            margin-top: 40px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(250, 204, 21, 0.1);
+            border: 1px solid var(--accent);
+            display: none;
+        }
+
+        .synergy-score { font-size: 2rem; font-weight: 800; color: var(--accent); }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🎮 Fortnite Duo Synergy</h1>
-  <p>Compare your Fortnite stats and see how good of a duo you really are.</p>
+    <h1>DuoSync <span style="color:var(--primary)">RL</span></h1>
+    <p class="subtitle">Enter Epic IDs to calculate team synergy</p>
 
-  <input id="player1" placeholder="Your Epic Username">
-  <input id="player2" placeholder="Duo Epic Username">
+    <div class="inputs">
+        <input type="text" id="p1" placeholder="Epic ID 1 (e.g. Squishy)">
+        <input type="text" id="p2" placeholder="Epic ID 2 (e.g. Justin)">
+        <button onclick="comparePlayers()">Analyze Duo</button>
+    </div>
 
-  <button onclick="analyzeDuo()">Analyze Duo</button>
+    <div class="loader" id="loader"></div>
 
-  <div id="result"></div>
+    <div class="comparison-grid" id="compGrid">
+        <div class="player-card" id="card1">
+            <h2 id="name1">-</h2>
+            <div class="stat-label">Current MMR</div>
+            <div class="stat-value" id="mmr1">0</div>
+        </div>
+        
+        <div class="vs-badge">VS</div>
+
+        <div class="player-card" id="card2">
+            <h2 id="name2">-</h2>
+            <div class="stat-label">Current MMR</div>
+            <div class="stat-value" id="mmr2">0</div>
+        </div>
+    </div>
+
+    <div class="synergy-box" id="synergyBox">
+        <div class="stat-label">Synergy Rating</div>
+        <div class="synergy-score" id="synergyValue">0%</div>
+        <p id="synergyDesc">Loading compatibility report...</p>
+    </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+    async function fetchStats(playerID) {
+        const url = `https://rocket-league1.p.rapidapi.com/ranks/${playerID}`;
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': '33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d', // REPLACE THIS
+                'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com'
+            }
+        };
+
+        try {
+            const response = await fetch(url, options);
+            const result = await response.json();
+            // Rocket League API returns segments/stats. We'll grab 2v2 MMR usually.
+            const doubles = result.ranks.find(r => r.playlist === 'Ranked Doubles 2v2') || result.ranks[0];
+            return {
+                name: playerID,
+                mmr: doubles ? doubles.mmr : 1000,
+                rank: doubles ? doubles.rank : 'Unranked'
+            };
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    async function comparePlayers() {
+        const id1 = document.getElementById('p1').value;
+        const id2 = document.getElementById('p2').value;
+        const loader = document.getElementById('loader');
+        const grid = document.getElementById('compGrid');
+        const sBox = document.getElementById('synergyBox');
+
+        if(!id1 || !id2) return alert("Please enter both IDs");
+
+        loader.style.display = 'block';
+        grid.style.display = 'none';
+        sBox.style.display = 'none';
+
+        const data1 = await fetchStats(id1);
+        const data2 = await fetchStats(id2);
+
+        loader.style.display = 'none';
+
+        if(data1 && data2) {
+            document.getElementById('name1').innerText = data1.name;
+            document.getElementById('mmr1').innerText = data1.mmr;
+            document.getElementById('name2').innerText = data2.name;
+            document.getElementById('mmr2').innerText = data2.mmr;
+
+            // Logic for Synergy: Closer MMR = Better Duo (usually)
+            const diff = Math.abs(data1.mmr - data2.mmr);
+            let score = 100 - (diff / 10); 
+            if(score < 0) score = 10;
+            
+            let desc = "";
+            if(score > 90) desc = "Perfect Match! You'll rotate like pros.";
+            else if(score > 75) desc = "Solid Duo. Great for ranking up together.";
+            else desc = "Rank Gap Detected. One of you might be carrying!";
+
+            document.getElementById('synergyValue').innerText = Math.round(score) + "%";
+            document.getElementById('synergyDesc').innerText = desc;
+
+            grid.style.display = 'grid';
+            sBox.style.display = 'block';
+        } else {
+            alert("Error fetching player data. Check your API Key or Player IDs.");
+        }
+    }
+</script>
+
 </body>
 </html>
