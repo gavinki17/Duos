@@ -8,28 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #0a0a0a, #1c0000);
-            color: #f0f0f0;
+            background: linear-gradient(135deg, #0a0a1f, #000814);
+            color: #e0f2fe;
             min-height: 100vh;
             font-family: system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
         }
-        .title-gradient {
-            background: linear-gradient(90deg, #ff2d55, #ff758f, #ff2d55);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 200% auto;
-            animation: gradientFlow 6s linear infinite;
-        }
-        @keyframes gradientFlow {
-            0% { background-position: 0% center; }
-            50% { background-position: 100% center; }
-            100% { background-position: 0% center; }
+        .glow-gone {
+            text-shadow: none;
         }
         .main-card {
-            background: rgba(12, 12, 12, 0.75);
-            border: 1px solid rgba(255, 45, 85, 0.18);
+            background: rgba(12, 15, 30, 0.75);
+            border: 1px solid rgba(59, 130, 246, 0.25);
             border-radius: 2rem;
             backdrop-filter: blur(16px);
         }
@@ -57,77 +47,80 @@
             transition: all 0.4s ease;
         }
         .input-focus:focus {
-            border-color: #ff2d55;
-            box-shadow: 0 0 0 4px rgba(255, 45, 85, 0.25);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
             transform: scale(1.015);
         }
-        /* Rank-specific themes */
-        .rank-bronze    { background: linear-gradient(135deg, #4a2c0b, #8c5523); border-color: #d97706; }
-        .rank-silver    { background: linear-gradient(135deg, #4b5563, #9ca3af); border-color: #d1d5db; }
-        .rank-gold      { background: linear-gradient(135deg, #78350f, #ca8a04); border-color: #fbbf24; }
-        .rank-platinum  { background: linear-gradient(135deg, #1e293b, #64748b); border-color: #cbd5e1; }
-        .rank-diamond   { background: linear-gradient(135deg, #1e40af, #3b82f6); border-color: #60a5fa; }
-        .rank-champion  { background: linear-gradient(135deg, #6b21a8, #a855f7); border-color: #c084fc; }
-        .rank-grand     { background: linear-gradient(135deg, #991b1b, #ef4444); border-color: #f87171; }
-        .rank-legend    { background: linear-gradient(135deg, #0f172a, #1e293b); border-color: #e2e8f0; box-shadow: 0 0 40px rgba(255,255,255,0.15); }
-        .rank-default   { background: linear-gradient(135deg, #111827, #1f2937); border-color: #4b5563; }
+        .pulse-glow {
+            animation: pulse 4s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.92; }
+            50% { opacity: 1; }
+        }
+        .rank-bronze   { background: linear-gradient(135deg, #3b2a1e, #5c4426); border-color: #92400e; }
+        .rank-silver   { background: linear-gradient(135deg, #4b5563, #9ca3af); border-color: #cbd5e1; }
+        .rank-gold     { background: linear-gradient(135deg, #5c3d00, #a67c00); border-color: #fbbf24; }
+        .rank-platinum { background: linear-gradient(135deg, #1e293b, #64748b); border-color: #94a3b8; }
+        .rank-diamond  { background: linear-gradient(135deg, #1e40af, #3b82f6); border-color: #60a5fa; }
+        .rank-champion { background: linear-gradient(135deg, #1e3a8a, #2563eb); border-color: #3b82f6; }
+        .rank-grand    { background: linear-gradient(135deg, #1e293b, #1d4ed8); border-color: #3b82f6; }
+        .rank-legend   { background: linear-gradient(135deg, #0f172a, #1e40af); border-color: #60a5fa; box-shadow: 0 0 40px rgba(59,130,246,0.18); }
+        .rank-default  { background: linear-gradient(135deg, #111827, #1e293b); border-color: #4b5563; }
+        .blue-btn {
+            background: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa);
+        }
+        .blue-btn:hover {
+            background: linear-gradient(to right, #1d4ed8, #2563eb, #3b82f6);
+        }
     </style>
 </head>
 <body class="flex flex-col">
-
-    <!-- SEARCH PAGE -->
     <div id="searchPage" class="flex-1 flex flex-col items-center justify-center px-6 py-12">
-        <div class="text-center mb-16">
-            <h1 class="text-8xl md:text-9xl font-black tracking-tighter title-gradient">
+        <div class="text-center mb-16 pulse-glow">
+            <h1 class="text-8xl md:text-9xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent glow-gone">
                 RLMath
             </h1>
-            <p class="mt-4 text-xl md:text-2xl text-zinc-400 font-light">
+            <p class="mt-4 text-xl md:text-2xl text-blue-300/80 font-light">
                 Rocket League stats • fast & clean
             </p>
         </div>
-
         <div class="w-full max-w-2xl main-card p-10 md:p-14 shadow-2xl">
-            <input 
-                id="playerInput" 
-                type="text" 
+            <input
+                id="playerInput"
+                type="text"
                 placeholder="Enter Epic Account ID (32 hex characters)"
-                class="w-full bg-black/60 border-2 border-zinc-700 rounded-3xl px-8 py-7 text-2xl placeholder-zinc-500 outline-none input-focus text-center font-mono"
+                class="w-full bg-black/60 border-2 border-blue-900/50 rounded-3xl px-8 py-7 text-2xl placeholder-blue-400/60 outline-none input-focus text-center font-mono text-blue-100"
             >
-            <button 
-                onclick="searchPlayer()" 
-                class="mt-10 w-full bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-700 hover:via-rose-700 hover:to-red-700 py-7 rounded-3xl text-2xl font-bold flex items-center justify-center gap-4 transition-all active:scale-95 shadow-2xl"
+            <button
+                onclick="searchPlayer()"
+                class="mt-10 w-full blue-btn hover:brightness-110 py-7 rounded-3xl text-2xl font-bold flex items-center justify-center gap-4 transition-all active:scale-95 shadow-2xl"
             >
                 <i class="fa-solid fa-rocket"></i>
                 LOAD PROFILE
             </button>
         </div>
-
-        <div class="mt-12 text-sm text-zinc-600 text-center">
+        <div class="mt-12 text-sm text-blue-400/60 text-center">
             Use a 32-character Epic Account ID • Find yours on rocketleague.tracker.network
         </div>
     </div>
 
-    <!-- PLAYER PROFILE PAGE -->
     <div id="playerPage" class="hidden">
         <div class="max-w-6xl mx-auto px-6 pt-10 pb-16">
-            <button 
-                onclick="showSearchPage()" 
-                class="mb-12 flex items-center gap-4 text-zinc-400 hover:text-white text-xl transition hover:scale-105"
+            <button
+                onclick="showSearchPage()"
+                class="mb-12 flex items-center gap-4 text-blue-300 hover:text-white text-xl transition hover:scale-105"
             >
                 <i class="fa-solid fa-arrow-left-long"></i>
                 Back
             </button>
-
-            <div id="playerHeader" class="main-card p-10 md:p-14 mb-16 flex flex-col md:flex-row items-center gap-10"></div>
-
-            <h2 class="text-5xl font-black mb-10 text-center md:text-left title-gradient">
+            <div id="playerHeader" class="main-card p-10 md:p-14 mb-16 flex flex-col md:flex-row items-center gap-10 animate-fade-in"></div>
+            <h2 class="text-5xl font-black mb-10 text-center md:text-left bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
                 Current Ranks
             </h2>
-
             <div id="ranksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
-
             <details class="mt-20 main-card p-10 text-sm">
-                <summary class="cursor-pointer flex items-center gap-4 text-red-400 font-medium text-lg">
+                <summary class="cursor-pointer flex items-center gap-4 text-blue-400 font-medium text-lg">
                     <i class="fa-solid fa-code"></i>
                     Raw JSON Response
                 </summary>
@@ -136,18 +129,16 @@
         </div>
     </div>
 
-    <!-- Loading -->
     <div id="loading" class="hidden fixed inset-0 bg-black/85 flex items-center justify-center z-50">
         <div class="text-center">
-            <div class="w-24 h-24 border-8 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-8"></div>
-            <p class="text-3xl font-bold text-red-400">Loading stats...</p>
+            <div class="w-24 h-24 border-8 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-8"></div>
+            <p class="text-3xl font-bold text-blue-400">Loading stats...</p>
         </div>
     </div>
 
-    <!-- Error -->
     <div id="errorModal" class="hidden fixed inset-0 bg-black/85 flex items-center justify-center z-50 px-6">
         <div class="main-card max-w-lg w-full p-12 text-center">
-            <i class="fa-solid fa-triangle-exclamation text-7xl text-red-500 mb-8"></i>
+            <i class="fa-solid fa-triangle-exclamation text-7xl text-blue-500 mb-8"></i>
             <p id="errorText" class="text-2xl leading-relaxed mb-10"></p>
             <button onclick="hideError()" class="w-full py-6 bg-zinc-900 hover:bg-zinc-800 rounded-3xl text-xl font-medium transition">
                 CLOSE
@@ -157,40 +148,31 @@
 
     <script>
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
-
         function showSearchPage() {
             document.getElementById('playerPage').classList.add('hidden');
             document.getElementById('searchPage').classList.remove('hidden');
         }
-
         function showPlayerPage() {
             document.getElementById('searchPage').classList.add('hidden');
             document.getElementById('playerPage').classList.remove('hidden');
         }
-
         function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
-
         function showError(msg) {
             document.getElementById('errorText').innerHTML = msg;
             document.getElementById('errorModal').classList.remove('hidden');
             hideLoading();
         }
         function hideError() { document.getElementById('errorModal').classList.add('hidden'); }
-
         async function searchPlayer() {
             let id = document.getElementById('playerInput').value.trim().replace(/\s/g, '');
             if (!id) return alert("Please enter an Epic Account ID");
-
             if (!/^[0-9a-fA-F]{32}$/.test(id)) {
                 showError("Invalid format.<br>Must be exactly 32 hexadecimal characters.");
                 return;
             }
-
             showLoading();
-
             const url = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
-
             try {
                 const res = await fetch(url, {
                     headers: {
@@ -200,16 +182,14 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
-
                 if (!res.ok) {
                     if (res.status === 404) showError("Player not found.<br>Check the Epic ID.");
+                    else if (res.status === 429) showError("Rate limit reached.<br>Try again later.");
                     else showError(`Error ${res.status}`);
                     return;
                 }
-
                 const data = await res.json();
                 window.currentData = data;
-
                 renderProfile(data, id);
                 showPlayerPage();
             } catch (err) {
@@ -218,7 +198,6 @@
                 hideLoading();
             }
         }
-
         function getRankClass(rankName) {
             rankName = rankName.toLowerCase();
             if (rankName.includes('bronze')) return 'rank-bronze';
@@ -231,32 +210,26 @@
             if (rankName.includes('supersonic legend')) return 'rank-legend';
             return 'rank-default';
         }
-
         function renderProfile(data, id) {
             const header = document.getElementById('playerHeader');
             const grid = document.getElementById('ranksGrid');
             const raw = document.getElementById('rawJson');
-
             raw.textContent = JSON.stringify(data, null, 2);
-
             let name = data.name || data.displayName || data.username || "Player";
             if (name.length > 24) name = name.slice(0, 21) + "...";
-
             header.innerHTML = `
-                <div class="w-32 h-32 bg-gradient-to-br from-red-600 to-rose-800 rounded-3xl flex items-center justify-center text-8xl shadow-2xl flex-shrink-0">
+                <div class="w-32 h-32 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl flex items-center justify-center text-8xl shadow-2xl flex-shrink-0">
                     🚀
                 </div>
                 <div class="text-center md:text-left w-full min-w-0">
-                    <div class="text-5xl md:text-7xl font-black tracking-tight title-gradient break-words">${name}</div>
+                    <div class="text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent break-words">${name}</div>
                     <div class="mt-4 flex flex-wrap items-center gap-4 justify-center md:justify-start">
-                        <span class="px-6 py-2 bg-red-950/60 text-red-300 font-mono rounded-2xl text-sm whitespace-nowrap">EPIC ID</span>
-                        <span class="text-zinc-500 font-mono text-sm break-all">${id}</span>
+                        <span class="px-6 py-2 bg-blue-950/60 text-blue-300 font-mono rounded-2xl text-sm whitespace-nowrap">EPIC ID</span>
+                        <span class="text-blue-400/70 font-mono text-sm break-all">${id}</span>
                     </div>
                 </div>
             `;
-
             grid.innerHTML = '';
-
             let playlists = {};
             if (data && typeof data === 'object') {
                 Object.keys(data).forEach(k => {
@@ -267,12 +240,10 @@
                 });
                 if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
             }
-
             if (Object.keys(playlists).length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-20 text-zinc-500 text-2xl">No rank data available</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-20 text-blue-400/50 text-2xl">No rank data available</div>`;
                 return;
             }
-
             const icons = {
                 "bronze": "https://static.wikia.nocookie.net/rocketleague/images/6/6c/Bronze1_rank_icon.png",
                 "silver": "https://static.wikia.nocookie.net/rocketleague/images/2/2f/Silver1_rank_icon.png",
@@ -284,7 +255,6 @@
                 "supersonic legend": "https://static.wikia.nocookie.net/rocketleague/images/0/0a/SupersonicLegend_rank_icon.png",
                 "unranked": "https://via.placeholder.com/90x90/222/aaa?text=?"
             };
-
             Object.entries(playlists).forEach(([key, stats]) => {
                 const title = key
                     .replace(/([A-Z])/g, ' $1')
@@ -292,13 +262,11 @@
                     .replace('Duel', '1v1')
                     .replace('Doubles', '2v2')
                     .replace('Standard', '3v3');
-
                 let rank = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 let div = stats.division !== undefined ? `Div ${stats.division}` : '';
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
                 let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
-
                 let icon = icons.unranked;
                 for (let k in icons) {
                     if (rank.includes(k)) {
@@ -306,9 +274,7 @@
                         break;
                     }
                 }
-
                 const themeClass = getRankClass(rank);
-
                 const card = `
                     <div class="rank-card ${themeClass} p-8 md:p-10">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 md:gap-8">
@@ -340,7 +306,6 @@
                 grid.innerHTML += card;
             });
         }
-
         document.getElementById('playerInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') searchPlayer();
         });
