@@ -14,8 +14,18 @@
             font-family: system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
         }
-        .glow-red {
-            text-shadow: 0 0 40px rgba(255, 45, 85, 0.7), 0 0 80px rgba(255, 45, 85, 0.4);
+        .title-gradient {
+            background: linear-gradient(90deg, #ff2d55, #ff758f, #ff2d55);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: gradientFlow 6s linear infinite;
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+            100% { background-position: 0% center; }
         }
         .main-card {
             background: rgba(12, 12, 12, 0.75);
@@ -51,13 +61,6 @@
             box-shadow: 0 0 0 4px rgba(255, 45, 85, 0.25);
             transform: scale(1.015);
         }
-        .pulse-glow {
-            animation: pulse 4s infinite ease-in-out;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.92; }
-            50% { opacity: 1; }
-        }
         /* Rank-specific themes */
         .rank-bronze    { background: linear-gradient(135deg, #4a2c0b, #8c5523); border-color: #d97706; }
         .rank-silver    { background: linear-gradient(135deg, #4b5563, #9ca3af); border-color: #d1d5db; }
@@ -74,8 +77,8 @@
 
     <!-- SEARCH PAGE -->
     <div id="searchPage" class="flex-1 flex flex-col items-center justify-center px-6 py-12">
-        <div class="text-center mb-16 pulse-glow">
-            <h1 class="text-8xl md:text-9xl font-black tracking-tighter glow-red">
+        <div class="text-center mb-16">
+            <h1 class="text-8xl md:text-9xl font-black tracking-tighter title-gradient">
                 RLMath
             </h1>
             <p class="mt-4 text-xl md:text-2xl text-zinc-400 font-light">
@@ -115,9 +118,9 @@
                 Back
             </button>
 
-            <div id="playerHeader" class="main-card p-10 md:p-14 mb-16 flex flex-col md:flex-row items-center gap-10 animate-fade-in"></div>
+            <div id="playerHeader" class="main-card p-10 md:p-14 mb-16 flex flex-col md:flex-row items-center gap-10"></div>
 
-            <h2 class="text-5xl font-black mb-10 text-center md:text-left glow-red">
+            <h2 class="text-5xl font-black mb-10 text-center md:text-left title-gradient">
                 Current Ranks
             </h2>
 
@@ -200,7 +203,6 @@
 
                 if (!res.ok) {
                     if (res.status === 404) showError("Player not found.<br>Check the Epic ID.");
-                    else if (res.status === 429) showError("Rate limit reached.<br>Try again later.");
                     else showError(`Error ${res.status}`);
                     return;
                 }
@@ -245,7 +247,7 @@
                     🚀
                 </div>
                 <div class="text-center md:text-left w-full min-w-0">
-                    <div class="text-5xl md:text-7xl font-black tracking-tight glow-red break-words">${name}</div>
+                    <div class="text-5xl md:text-7xl font-black tracking-tight title-gradient break-words">${name}</div>
                     <div class="mt-4 flex flex-wrap items-center gap-4 justify-center md:justify-start">
                         <span class="px-6 py-2 bg-red-950/60 text-red-300 font-mono rounded-2xl text-sm whitespace-nowrap">EPIC ID</span>
                         <span class="text-zinc-500 font-mono text-sm break-all">${id}</span>
