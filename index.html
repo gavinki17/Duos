@@ -3,105 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RL Stats</title>
+    <title>RL Tracker • Stats</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #0f0f0f, #1a0000);
-            color: #e5e5e5;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #220000);
+            color: #eee;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-        .rl-red { color: #ff2d55; }
-        .rl-red-dark { color: #c41e3a; }
+        .header-gradient { background: linear-gradient(90deg, #ff2d55, #ff5e7a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .card {
-            background: rgba(20, 20, 20, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 45, 85, 0.15);
-            border-radius: 1.5rem;
-            transition: all 0.4s ease;
+            background: rgba(15, 15, 15, 0.85);
+            border: 1px solid rgba(255, 45, 85, 0.2);
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
         }
-        .card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(255, 45, 85, 0.4);
-            box-shadow: 0 20px 40px -10px rgba(255, 45, 85, 0.2);
-        }
-        .btn-red {
-            background: linear-gradient(90deg, #ff2d55, #c41e3a);
-        }
-        .btn-red:hover {
-            background: linear-gradient(90deg, #ff4d6f, #e03e52);
-        }
-        .header-gradient {
-            background: linear-gradient(90deg, #ff2d55, #c41e3a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .rank-icon { width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); }
+        .rank-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .rank-card:hover { transform: translateY(-8px); border-color: #ff2d55; }
+        .rank-icon { width: 92px; height: 92px; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.7)); }
+        .playlist-name { font-size: 0.95rem; letter-spacing: 1px; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen pb-12">
 
-    <!-- Main Search Page -->
-    <div id="searchPage" class="max-w-2xl mx-auto px-6 py-20 flex flex-col items-center justify-center min-h-screen">
-        <div class="text-center mb-12">
-            <div class="text-7xl mb-4">🚀</div>
-            <h1 class="text-6xl font-black tracking-tight header-gradient">RL STATS</h1>
-            <p class="text-xl text-gray-400 mt-3">Fast. Clean. Rocket League Ranks.</p>
-        </div>
-
-        <div class="w-full card p-10">
-            <div class="text-center mb-8 text-gray-300 text-sm">
-                Using shared demo key — for personal use only
+    <!-- SEARCH PAGE -->
+    <div id="searchPage" class="max-w-xl mx-auto px-6 py-24 flex flex-col items-center min-h-screen">
+        <div class="text-center mb-16">
+            <div class="flex justify-center mb-6">
+                <div class="text-8xl">🚀</div>
             </div>
-            <label class="block text-sm font-medium text-gray-300 mb-3">Epic Username or Epic ID</label>
-            <input id="playerInput" type="text" placeholder="e.g. Musty   or   1234567890abcdef1234567890abcdef" class="w-full bg-black/40 border border-gray-700 rounded-2xl px-6 py-5 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition">
-            <button onclick="searchPlayer()" id="fetchBtn" class="mt-8 w-full btn-red text-white font-bold text-lg py-5 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg">
-                <i class="fa-solid fa-rocket"></i> VIEW PLAYER STATS
+            <h1 class="text-7xl font-black tracking-tighter header-gradient">RL TRACKER</h1>
+            <p class="mt-4 text-2xl text-gray-400">Clean Rocket League stats • Just like tracker.network</p>
+        </div>
+
+        <div class="w-full card p-10 shadow-2xl">
+            <div class="mb-8">
+                <label class="block text-red-400 text-sm font-medium mb-3">EPIC ACCOUNT ID</label>
+                <input id="playerInput" type="text" placeholder="32-character Epic ID (e.g. 1234567890abcdef1234567890abcdef)" 
+                       class="w-full bg-zinc-950 border border-zinc-700 focus:border-red-500 rounded-3xl px-8 py-6 text-xl placeholder-zinc-500 outline-none transition">
+            </div>
+            
+            <div class="text-center text-xs text-gray-500 mb-8">
+                Don't know your Epic ID?<br>
+                <a href="https://rocketleague.tracker.network" target="_blank" class="text-red-400 hover:underline">Search your name on tracker.network → copy the long ID from the URL</a>
+            </div>
+
+            <button onclick="searchPlayer()" id="fetchBtn"
+                    class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 py-6 rounded-3xl text-xl font-bold flex items-center justify-center gap-4 transition-all active:scale-95 shadow-xl">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                LOAD PLAYER PROFILE
             </button>
+        </div>
+
+        <div class="mt-12 text-xs text-gray-500 text-center">
+            Demo using shared RapidAPI key • Personal use only
         </div>
     </div>
 
-    <!-- Player Detail Page (hidden initially) -->
-    <div id="playerPage" class="hidden">
-        <div class="max-w-5xl mx-auto px-6 py-12">
-            <!-- Back Button -->
-            <button onclick="showSearchPage()" class="mb-8 flex items-center gap-3 text-gray-400 hover:text-white transition">
-                <i class="fa-solid fa-arrow-left"></i> Back to Search
-            </button>
+    <!-- PLAYER PROFILE PAGE -->
+    <div id="playerPage" class="hidden max-w-6xl mx-auto px-6 pt-8">
+        <!-- Back -->
+        <button onclick="showSearchPage()" 
+                class="flex items-center gap-3 text-gray-400 hover:text-white mb-10 transition text-lg">
+            <i class="fa-solid fa-arrow-left"></i> BACK TO SEARCH
+        </button>
 
-            <!-- Player Header -->
-            <div id="playerInfo" class="card p-10 mb-12 flex flex-col md:flex-row items-center gap-8"></div>
+        <!-- Player Header -->
+        <div id="playerHeader" class="card p-10 mb-12 flex flex-col md:flex-row items-center gap-10"></div>
 
-            <!-- Ranks -->
-            <h2 class="text-4xl font-bold mb-8 text-center md:text-left rl-red">Current Ranks</h2>
-            <div id="ranksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        <!-- Ranks -->
+        <h2 class="text-4xl font-bold mb-8 flex items-center gap-4">
+            <span class="text-red-400">CURRENT RANKS</span>
+        </h2>
+        <div id="ranksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
 
-            <!-- Raw JSON (collapsible) -->
-            <details class="mt-16 card p-8">
-                <summary class="cursor-pointer text-red-400 font-medium flex items-center gap-3 text-lg">
-                    <i class="fa-solid fa-code"></i> Raw API Response
-                </summary>
-                <pre id="rawJson" class="mt-6 text-sm bg-black/60 p-6 rounded-xl overflow-auto max-h-96 text-gray-300 whitespace-pre-wrap"></pre>
-            </details>
+        <!-- Tournaments -->
+        <div class="mt-16">
+            <h2 class="text-4xl font-bold mb-8 flex items-center gap-4">
+                <span class="text-red-400">TOURNAMENT WINS</span>
+            </h2>
+            <div id="tournamentSection" class="card p-10"></div>
         </div>
+
+        <!-- Raw Data -->
+        <details class="mt-16 card p-8 text-sm">
+            <summary class="cursor-pointer flex items-center gap-3 text-red-400 font-medium">
+                <i class="fa-solid fa-code"></i> RAW API RESPONSE (for debugging)
+            </summary>
+            <pre id="rawJson" class="mt-6 overflow-auto max-h-96 bg-black/70 p-6 rounded-2xl text-xs text-gray-300"></pre>
+        </details>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loading" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <!-- Loading -->
+    <div id="loading" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
         <div class="text-center">
-            <div class="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <p class="text-2xl font-medium">Loading player stats...</p>
+            <div class="w-20 h-20 border-8 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p class="mt-8 text-2xl font-medium">Fetching stats from Rocket League...</p>
         </div>
     </div>
 
-    <!-- Error Modal -->
-    <div id="error" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-6">
-        <div class="card p-10 max-w-lg w-full text-center">
-            <i class="fa-solid fa-circle-exclamation text-6xl text-red-500 mb-6"></i>
-            <p id="errorMsg" class="text-xl mb-8"></p>
-            <button onclick="hideError()" class="px-10 py-4 bg-gray-800 hover:bg-gray-700 rounded-2xl text-white font-medium transition">
-                Close
+    <!-- Error -->
+    <div id="errorModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 px-6">
+        <div class="card max-w-md w-full p-10 text-center">
+            <i class="fa-solid fa-triangle-exclamation text-6xl text-red-500 mb-6"></i>
+            <p id="errorText" class="text-xl leading-relaxed"></p>
+            <button onclick="hideError()" 
+                    class="mt-10 w-full py-5 bg-zinc-800 hover:bg-zinc-700 rounded-3xl text-lg font-medium transition">
+                CLOSE
             </button>
         </div>
     </div>
@@ -109,20 +118,9 @@
     <script>
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
 
-        function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
-        function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
-
-        function showError(msg) {
-            document.getElementById('errorMsg').innerHTML = msg;
-            document.getElementById('error').classList.remove('hidden');
-            hideLoading();
-        }
-        function hideError() { document.getElementById('error').classList.add('hidden'); }
-
         function showSearchPage() {
-            document.getElementById('searchPage').classList.remove('hidden');
             document.getElementById('playerPage').classList.add('hidden');
-            hideLoading();
+            document.getElementById('searchPage').classList.remove('hidden');
         }
 
         function showPlayerPage() {
@@ -130,40 +128,29 @@
             document.getElementById('playerPage').classList.remove('hidden');
         }
 
-        async function resolveEpicId(username) {
-            const url = `https://rocket-league1.p.rapidapi.com/profile/${encodeURIComponent(username)}`;
-            try {
-                const res = await fetch(url, {
-                    headers: {
-                        'X-RapidAPI-Key': API_KEY,
-                        'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com',
-                        'x-rapidapi-ua': 'RapidAPI-Playground'
-                    }
-                });
-                if (!res.ok) return null;
-                const data = await res.json();
-                return data.id || data.epicId || data.accountId || data.playerId || null;
-            } catch {
-                return null;
-            }
+        function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
+        function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
+
+        function showError(msg) {
+            document.getElementById('errorText').innerHTML = msg;
+            document.getElementById('errorModal').classList.remove('hidden');
+            hideLoading();
         }
+        function hideError() { document.getElementById('errorModal').classList.add('hidden'); }
 
         async function searchPlayer() {
-            let input = document.getElementById('playerInput').value.trim();
-            if (!input) return alert("Enter a username or Epic ID");
+            let id = document.getElementById('playerInput').value.trim();
+            if (!id) return alert("Please enter an Epic Account ID");
+
+            // Must be 32 hex characters
+            if (!/^[0-9a-fA-F]{32}$/.test(id)) {
+                showError("Invalid Epic Account ID.<br>Must be exactly 32 hexadecimal characters.<br><br>Use <a href='https://rocketleague.tracker.network' target='_blank' class='underline text-red-400'>rocketleague.tracker.network</a> to search by name and copy the ID.");
+                return;
+            }
 
             showLoading();
 
-            let epicId = input;
-            if (!/^[0-9a-fA-F]{32}$/.test(input)) {
-                epicId = await resolveEpicId(input);
-                if (!epicId) {
-                    showError("Couldn't find Epic ID for that username.<br>Try the 32-character Epic Account ID instead.");
-                    return;
-                }
-            }
-
-            const url = `https://rocket-league1.p.rapidapi.com/ranks/${encodeURIComponent(epicId)}`;
+            const url = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
 
             try {
                 const res = await fetch(url, {
@@ -176,121 +163,152 @@
                 });
 
                 if (!res.ok) {
-                    if (res.status === 404) {
-                        showError("Player not found.<br>Check spelling / case (usernames are case-sensitive).");
-                    } else if (res.status === 429) {
-                        showError("Rate limit hit.<br>Shared key is busy — try again later.");
-                    } else {
-                        throw new Error(`API error (${res.status})`);
-                    }
+                    if (res.status === 404) showError("Player not found.<br>Double-check the Epic Account ID.");
+                    else if (res.status === 429) showError("Rate limit reached on shared key.<br>Try again in a few minutes.");
+                    else showError(`API error ${res.status}`);
                     return;
                 }
 
                 const data = await res.json();
-                window.lastData = data;
+                window.currentData = data;
 
-                renderPlayer(data, input);
+                renderPlayerProfile(data, id);
                 showPlayerPage();
-            } catch (err) {
-                showError("Something went wrong.<br>" + err.message);
+            } catch (e) {
+                showError("Connection error.<br>Please try again later.");
             } finally {
                 hideLoading();
             }
         }
 
-        function renderPlayer(data, inputName) {
-            const info = document.getElementById('playerInfo');
-            const grid = document.getElementById('ranksGrid');
-            grid.innerHTML = '';
-            info.innerHTML = '';
+        function renderPlayerProfile(data, inputId) {
+            const header = document.getElementById('playerHeader');
+            const ranksGrid = document.getElementById('ranksGrid');
+            const tourneyDiv = document.getElementById('tournamentSection');
+            const raw = document.getElementById('rawJson');
 
-            let name = data.name || data.displayName || data.username || inputName || "Player";
+            raw.textContent = JSON.stringify(data, null, 2);
 
-            info.innerHTML = `
-                <div class="w-24 h-24 bg-gradient-to-br from-red-600 to-red-800 rounded-3xl flex items-center justify-center text-6xl shadow-2xl">🚀</div>
-                <div class="text-center md:text-left">
-                    <h2 class="text-5xl font-black header-gradient">${name}</h2>
-                    <p class="text-red-400 mt-2">Input: ${inputName}</p>
-                    <p class="text-sm text-gray-500 mt-1">Powered by Rocket League API</p>
+            // Player name (API usually returns it)
+            let name = data.name || data.displayName || data.username || "Epic Player";
+            if (name.length > 20) name = name.substring(0, 17) + "...";
+
+            header.innerHTML = `
+                <div class="flex-1 flex items-center gap-8">
+                    <div class="w-28 h-28 bg-gradient-to-br from-red-500 to-rose-600 rounded-3xl flex items-center justify-center text-7xl shadow-inner">🚀</div>
+                    <div>
+                        <div class="text-6xl font-black tracking-tighter header-gradient">${name}</div>
+                        <div class="flex items-center gap-3 mt-3">
+                            <span class="px-5 py-1.5 bg-red-900/50 text-red-300 text-sm font-mono rounded-2xl">EPIC</span>
+                            <span class="text-zinc-400 text-sm">${inputId}</span>
+                        </div>
+                    </div>
                 </div>
             `;
 
-            let playlists = {};
-            Object.keys(data).forEach(k => {
-                if (data[k] && typeof data[k] === 'object' && (data[k].mmr || data[k].rank || data[k].tier)) {
-                    playlists[k] = data[k];
-                }
-            });
-            if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
+            // Ranks
+            ranksGrid.innerHTML = '';
 
-            if (Object.keys(playlists).length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">No rank data available</div>';
-                return;
+            let playlists = {};
+            if (data && typeof data === 'object') {
+                Object.keys(data).forEach(k => {
+                    const v = data[k];
+                    if (v && typeof v === 'object' && (v.mmr || v.rank || v.tier)) {
+                        playlists[k] = v;
+                    }
+                });
+                if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
             }
 
-            const icons = {
-                "bronze": "https://static.wikia.nocookie.net/rocketleague/images/6/6c/Bronze1_rank_icon.png",
-                "silver": "https://static.wikia.nocookie.net/rocketleague/images/2/2f/Silver1_rank_icon.png",
-                "gold": "https://static.wikia.nocookie.net/rocketleague/images/0/0e/Gold1_rank_icon.png",
-                "platinum": "https://static.wikia.nocookie.net/rocketleague/images/4/4d/Platinum1_rank_icon.png",
-                "diamond": "https://static.wikia.nocookie.net/rocketleague/images/9/9b/Diamond1_rank_icon.png",
-                "champion": "https://static.wikia.nocookie.net/rocketleague/images/5/5e/Champion1_rank_icon.png",
-                "grand champion": "https://static.wikia.nocookie.net/rocketleague/images/0/0d/GrandChampion1_rank_icon.png",
-                "supersonic legend": "https://static.wikia.nocookie.net/rocketleague/images/0/0a/SupersonicLegend_rank_icon.png",
-                "unranked": "https://via.placeholder.com/80?text=?"
-            };
+            if (Object.keys(playlists).length === 0) {
+                ranksGrid.innerHTML = `<div class="col-span-full text-center py-20 text-zinc-400">No rank data found for this player.</div>`;
+            } else {
+                const icons = {
+                    "bronze": "https://static.wikia.nocookie.net/rocketleague/images/6/6c/Bronze1_rank_icon.png",
+                    "silver": "https://static.wikia.nocookie.net/rocketleague/images/2/2f/Silver1_rank_icon.png",
+                    "gold": "https://static.wikia.nocookie.net/rocketleague/images/0/0e/Gold1_rank_icon.png",
+                    "platinum": "https://static.wikia.nocookie.net/rocketleague/images/4/4d/Platinum1_rank_icon.png",
+                    "diamond": "https://static.wikia.nocookie.net/rocketleague/images/9/9b/Diamond1_rank_icon.png",
+                    "champion": "https://static.wikia.nocookie.net/rocketleague/images/5/5e/Champion1_rank_icon.png",
+                    "grand champion": "https://static.wikia.nocookie.net/rocketleague/images/0/0d/GrandChampion1_rank_icon.png",
+                    "supersonic legend": "https://static.wikia.nocookie.net/rocketleague/images/0/0a/SupersonicLegend_rank_icon.png",
+                    "unranked": "https://via.placeholder.com/92x92/333/fff?text=?"
+                };
 
-            Object.entries(playlists).forEach(([key, stats]) => {
-                const title = key.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase())
-                    .replace('Duel','1v1').replace('Doubles','2v2').replace('Standard','3v3').trim();
+                Object.entries(playlists).forEach(([playlistKey, s]) => {
+                    const nice = playlistKey
+                        .replace(/([A-Z])/g, ' $1')
+                        .replace(/^./, c => c.toUpperCase())
+                        .replace('Duel', '1v1 Duel')
+                        .replace('Doubles', '2v2 Doubles')
+                        .replace('Standard', '3v3 Standard');
 
-                let rank = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
-                let div = stats.division !== undefined ? `Div ${stats.division}` : '';
-                let mmr = stats.mmr || stats.skill || stats.rating || '—';
-                let games = stats.matchesPlayed || stats.total_games || stats.games || '—';
-                let streak = stats.winStreak || stats.streak || stats.current_win_streak || '—';
+                    let rankName = (s.rank || s.tier_name || s.tier || 'Unranked').toLowerCase();
+                    let div = s.division !== undefined ? `Division ${s.division}` : '';
+                    let mmr = s.mmr || s.skill || s.rating || '—';
+                    let games = s.matchesPlayed || s.games || '—';
+                    let streak = s.winStreak || s.streak || '—';
 
-                let icon = icons.unranked;
-                for (let [k, u] of Object.entries(icons)) {
-                    if (rank.includes(k)) { icon = u; break; }
+                    let icon = icons.unranked;
+                    Object.keys(icons).forEach(k => {
+                        if (rankName.includes(k)) icon = icons[k];
+                    });
+
+                    const cardHTML = `
+                        <div class="rank-card card p-8">
+                            <div class="flex gap-6 items-start">
+                                <img src="${icon}" class="rank-icon flex-shrink-0">
+                                <div class="flex-1">
+                                    <div class="playlist-name text-red-400 uppercase tracking-[2px]">${nice}</div>
+                                    <div class="text-4xl font-bold mt-2">${rankName.charAt(0).toUpperCase() + rankName.slice(1)}</div>
+                                    ${div ? `<div class="text-red-300 text-xl">${div}</div>` : ''}
+                                    <div class="mt-6 text-right">
+                                        <div class="text-5xl font-mono font-black text-red-400">${mmr}</div>
+                                        <div class="text-xs text-zinc-500 tracking-widest">MMR</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-8 text-center">
+                                <div class="bg-zinc-900/70 rounded-2xl py-4">
+                                    <div class="text-xs text-zinc-400">GAMES</div>
+                                    <div class="text-3xl font-mono mt-1">${games}</div>
+                                </div>
+                                <div class="bg-zinc-900/70 rounded-2xl py-4">
+                                    <div class="text-xs text-zinc-400">STREAK</div>
+                                    <div class="text-3xl font-mono mt-1 flex items-center justify-center gap-2">
+                                        ${streak} ${streak > 0 ? '🔥' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    ranksGrid.innerHTML += cardHTML;
+                });
+            }
+
+            // Tournament section
+            let tourneyHTML = `<div class="text-zinc-400 text-center py-12">No tournament data available from this API.<br><span class="text-sm">For full tournament history visit <a href="https://rocketleague.tracker.network" target="_blank" class="text-red-400 underline">rocketleague.tracker.network</a></span></div>`;
+
+            // Try to find any tournament-related data
+            if (data && typeof data === 'object') {
+                const tourneyKeys = Object.keys(data).filter(k => k.toLowerCase().includes('tournament') || k.toLowerCase().includes('title') || k.toLowerCase().includes('cup'));
+                if (tourneyKeys.length > 0) {
+                    tourneyHTML = `<div class="grid grid-cols-1 gap-4">`;
+                    tourneyKeys.forEach(k => {
+                        tourneyHTML += `
+                            <div class="bg-zinc-900/60 p-6 rounded-3xl flex justify-between items-center">
+                                <div class="font-medium">${k}</div>
+                                <div class="text-green-400 font-mono">${JSON.stringify(data[k])}</div>
+                            </div>
+                        `;
+                    });
+                    tourneyHTML += `</div>`;
                 }
-
-                const card = document.createElement('div');
-                card.className = 'card p-8';
-                card.innerHTML = `
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center gap-5">
-                            <img src="${icon}" alt="${rank}" class="rank-icon">
-                            <div>
-                                <div class="text-sm uppercase tracking-wider text-red-400">${title}</div>
-                                <div class="text-3xl font-bold mt-1">${rank.charAt(0).toUpperCase() + rank.slice(1)}</div>
-                                ${div ? `<div class="text-xl text-red-300 mt-1">${div}</div>` : ''}
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-5xl font-mono font-black text-red-400">${mmr}</div>
-                            <div class="text-sm text-gray-500">MMR</div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-6 text-sm">
-                        <div class="bg-black/40 rounded-xl p-5 text-center">
-                            <div class="text-gray-400 text-xs mb-1">Games</div>
-                            <div class="text-3xl font-mono">${games}</div>
-                        </div>
-                        <div class="bg-black/40 rounded-xl p-5 text-center">
-                            <div class="text-gray-400 text-xs mb-1">Streak</div>
-                            <div class="text-3xl font-mono flex justify-center items-center gap-2">
-                                ${streak} ${streak > 0 ? '<span class="text-green-400 text-sm">🔥</span>' : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-
-            document.getElementById('rawJson').textContent = JSON.stringify(data, null, 2);
+            }
+            tourneyDiv.innerHTML = tourneyHTML;
         }
 
+        // Enter key support
         document.getElementById('playerInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') searchPlayer();
         });
