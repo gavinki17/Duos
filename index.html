@@ -7,27 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body {
-            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
-        }
-        .rl-orange {
-            color: #f97316;
-        }
-        .card {
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgb(249 115 22 / 0.3);
-        }
-        .playlist-header {
-            background: linear-gradient(90deg, #f97316, #fb923c);
-        }
+        body { background: linear-gradient(135deg, #0a0a0a, #1a1a2e); }
+        .rl-orange { color: #f97316; }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgb(249 115 22 / 0.3); }
+        .playlist-header { background: linear-gradient(90deg, #f97316, #fb923c); }
+        .rank-icon { width: 64px; height: 64px; object-fit: contain; }
     </style>
 </head>
 <body class="min-h-screen text-white">
     <div class="max-w-4xl mx-auto px-6 py-12">
-        <!-- Header -->
         <div class="flex items-center justify-between mb-12">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-3xl">🚀</div>
@@ -36,53 +25,34 @@
                     <p class="text-orange-400 text-lg -mt-1">Player Rank & Stats Lookup</p>
                 </div>
             </div>
-            <a href="https://rapidapi.com/rocket-league-rocket-league-default/api/rocket-league1" 
-               target="_blank"
-               class="text-sm px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full flex items-center gap-2 transition-colors">
-                <i class="fa-solid fa-external-link"></i>
-                Get API Key
+            <a href="https://rapidapi.com/rocket-league-rocket-league-default/api/rocket-league1" target="_blank" class="text-sm px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full flex items-center gap-2 transition-colors">
+                <i class="fa-solid fa-external-link"></i> Get API Key
             </a>
         </div>
 
-        <!-- Input Form -->
         <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 mb-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- API Key -->
                 <div>
                     <label class="block text-sm font-medium text-gray-400 mb-2">RapidAPI Key</label>
                     <div class="relative">
-                        <input id="apiKey" 
-                               type="password"
-                               placeholder="Paste your X-RapidAPI-Key here"
-                               class="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500">
-                        <button onclick="toggleKeyVisibility()" 
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                        <input id="apiKey" type="password" placeholder="Paste your X-RapidAPI-Key here" class="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500">
+                        <button onclick="toggleKeyVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
                             <i id="eyeIcon" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">Required • Get it free on RapidAPI (Rocket League API)</p>
+                    <p class="text-xs text-gray-500 mt-2">Required • Get it on RapidAPI (Rocket League API)</p>
                 </div>
-
-                <!-- Player ID -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Player Epic ID</label>
-                    <input id="playerId" 
-                           type="text"
-                           placeholder="e.g. 1234567890abcdef1234567890abcdef"
-                           class="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500">
-                    <p class="text-xs text-gray-500 mt-2">Epic Games Account ID (found in RL profile or tracker sites)</p>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Epic Username or Epic ID</label>
+                    <input id="playerInput" type="text" placeholder="e.g. Musty or 1234567890abcdef1234567890abcdef" class="w-full bg-white/10 border border-white/20 rounded-2xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500">
+                    <p class="text-xs text-gray-500 mt-2">Epic display name or 32-char Epic Account ID</p>
                 </div>
             </div>
-
-            <button onclick="fetchPlayerStats()" 
-                    id="fetchBtn"
-                    class="mt-8 w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-lg py-5 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span>GET RANKS & STATS</span>
+            <button onclick="fetchPlayerStats()" id="fetchBtn" class="mt-8 w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-lg py-5 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95">
+                <i class="fa-solid fa-magnifying-glass"></i> <span>GET RANKS & STATS</span>
             </button>
         </div>
 
-        <!-- Loading -->
         <div id="loading" class="hidden text-center py-20">
             <div class="inline-flex items-center gap-4">
                 <div class="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
@@ -90,52 +60,35 @@
             </div>
         </div>
 
-        <!-- Results -->
         <div id="results" class="hidden">
-            <!-- Player Info -->
             <div id="playerInfo" class="bg-white/5 border border-white/10 rounded-3xl p-8 mb-8 flex items-center gap-6"></div>
-
-            <!-- Ranks Grid -->
             <div class="mb-4 flex items-center justify-between">
                 <h2 class="text-3xl font-bold">Current Ranks</h2>
-                <button onclick="copyJson()" 
-                        class="text-sm flex items-center gap-2 text-orange-400 hover:text-orange-300">
-                    <i class="fa-solid fa-copy"></i>
-                    Copy Raw JSON
+                <button onclick="copyJson()" class="text-sm flex items-center gap-2 text-orange-400 hover:text-orange-300">
+                    <i class="fa-solid fa-copy"></i> Copy Raw JSON
                 </button>
             </div>
-            
             <div id="ranksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-            <!-- Raw Data (collapsed) -->
             <details class="mt-12 bg-white/5 border border-white/10 rounded-3xl p-6">
                 <summary class="cursor-pointer text-orange-400 font-medium flex items-center gap-2">
-                    <i class="fa-solid fa-code"></i>
-                    Raw API Response
+                    <i class="fa-solid fa-code"></i> Raw API Response
                 </summary>
                 <pre id="rawJson" class="mt-4 text-xs bg-black/50 p-6 rounded-2xl overflow-auto max-h-96 text-gray-300"></pre>
             </details>
         </div>
 
-        <!-- Error -->
         <div id="error" class="hidden bg-red-950/50 border border-red-500/50 rounded-3xl p-8 text-center">
             <i class="fa-solid fa-circle-exclamation text-5xl text-red-400 mb-4"></i>
             <p id="errorMsg" class="text-xl"></p>
-            <button onclick="hideError()" 
-                    class="mt-6 px-8 py-3 bg-white/10 hover:bg-white/20 rounded-2xl">
-                Try Again
-            </button>
+            <button onclick="hideError()" class="mt-6 px-8 py-3 bg-white/10 hover:bg-white/20 rounded-2xl">Try Again</button>
         </div>
     </div>
 
     <footer class="text-center text-xs text-gray-500 py-8">
-        Built as a demo • Uses <a href="https://rapidapi.com/rocket-league-rocket-league-default/api/rocket-league1" 
-                                 class="underline hover:text-orange-400">Rocket League API</a> (endpoint: /ranks/{EPIC_ID}) • 
-        Client-side only • Keep your API key private
+        Built as a demo • Uses <a href="https://rapidapi.com/rocket-league-rocket-league-default/api/rocket-league1" class="underline hover:text-orange-400">Rocket League API</a> • Client-side only • Keep your API key private
     </footer>
 
     <script>
-        // Tailwind script already loaded
         function toggleKeyVisibility() {
             const keyInput = document.getElementById('apiKey');
             const eye = document.getElementById('eyeIcon');
@@ -148,26 +101,47 @@
             }
         }
 
+        async function resolveEpicId(username) {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const profileUrl = `https://rocket-league1.p.rapidapi.com/profile/${encodeURIComponent(username)}`;
+            try {
+                const res = await fetch(profileUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-RapidAPI-Key': apiKey,
+                        'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com',
+                        'x-rapidapi-ua': 'RapidAPI-Playground'
+                    }
+                });
+                if (!res.ok) throw new Error("Profile lookup failed");
+                const profileData = await res.json();
+                return profileData.id || profileData.epicId || profileData.accountId || profileData.playerId || null;
+            } catch (e) {
+                return null;
+            }
+        }
+
         async function fetchPlayerStats() {
             const apiKey = document.getElementById('apiKey').value.trim();
-            const playerId = document.getElementById('playerId').value.trim();
+            let input = document.getElementById('playerInput').value.trim();
+            if (!apiKey) return alert("Please enter your RapidAPI Key");
+            if (!input) return alert("Please enter an Epic Username or Epic ID");
 
-            if (!apiKey) {
-                alert("Please enter your RapidAPI Key");
-                return;
-            }
-            if (!playerId) {
-                alert("Please enter a Player Epic ID");
-                return;
-            }
-
-            // Show loading
             document.getElementById('loading').classList.remove('hidden');
             document.getElementById('results').classList.add('hidden');
             document.getElementById('error').classList.add('hidden');
             document.getElementById('fetchBtn').disabled = true;
 
-            const url = `https://rocket-league1.p.rapidapi.com/ranks/${encodeURIComponent(playerId)}`;
+            let epicId = input;
+            if (!/^[0-9a-fA-F]{32}$/.test(input)) {
+                epicId = await resolveEpicId(input);
+                if (!epicId) {
+                    showError("Could not find Epic ID from username. Try entering the 32-character Epic Account ID directly.");
+                    return;
+                }
+            }
+
+            const url = `https://rocket-league1.p.rapidapi.com/ranks/${encodeURIComponent(epicId)}`;
 
             try {
                 const response = await fetch(url, {
@@ -181,88 +155,82 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText || 'Check your API key or player ID'}`);
+                    if (response.status === 404 && !/^[0-9a-fA-F]{32}$/.test(input)) {
+                        showError("Player not found. Double-check the username (case-sensitive) or try the Epic Account ID instead.");
+                    } else {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText || 'Invalid ID or subscription issue'}`);
+                    }
+                    return;
                 }
 
                 const data = await response.json();
-                
-                // Hide loading
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('results').classList.remove('hidden');
 
-                // Store raw data
                 window.lastData = data;
                 document.getElementById('rawJson').textContent = JSON.stringify(data, null, 2);
 
-                // Render nicely
-                renderResults(data);
-
+                renderResults(data, input);
             } catch (err) {
-                console.error(err);
-                document.getElementById('loading').classList.add('hidden');
-                const errDiv = document.getElementById('error');
-                document.getElementById('errorMsg').innerHTML = `
-                    ${err.message}<br>
-                    <span class="text-sm text-gray-400 mt-2 block">Make sure the ID is a valid Epic Account ID and your subscription is active.</span>
-                `;
-                errDiv.classList.remove('hidden');
+                showError(err.message + "<br><small>Make sure your API key is valid and subscription active.</small>");
             } finally {
                 document.getElementById('fetchBtn').disabled = false;
             }
         }
 
-        function renderResults(data) {
+        function showError(msg) {
+            document.getElementById('loading').classList.add('hidden');
+            const errDiv = document.getElementById('error');
+            document.getElementById('errorMsg').innerHTML = msg;
+            errDiv.classList.remove('hidden');
+        }
+
+        function renderResults(data, inputName) {
             const playerInfo = document.getElementById('playerInfo');
             const ranksGrid = document.getElementById('ranksGrid');
             ranksGrid.innerHTML = '';
             playerInfo.innerHTML = '';
 
-            // Try to find player name (many responses include it at top level)
-            let playerName = data.name || data.displayName || data.username || "Rocket League Player";
-            
-            // Player header
+            let playerName = data.name || data.displayName || data.username || inputName || "Rocket League Player";
+
             playerInfo.innerHTML = `
                 <div class="w-20 h-20 bg-gradient-to-br from-orange-400 to-amber-500 rounded-3xl flex items-center justify-center text-5xl shadow-inner">👾</div>
                 <div>
                     <div class="text-3xl font-bold">${playerName}</div>
-                    <div class="text-orange-400 text-sm">Epic ID: ${document.getElementById('playerId').value}</div>
+                    <div class="text-orange-400 text-sm">Input: ${inputName}</div>
                     <div class="text-xs text-gray-400 mt-1">Data from Rocket League API</div>
                 </div>
             `;
 
-            // Find playlist data - the API returns an object with playlist keys
             let playlists = {};
-            
-            // Common structures from this API
             if (typeof data === 'object') {
-                // If it has direct playlist keys like "duel", "doubles", etc.
                 Object.keys(data).forEach(key => {
-                    if (typeof data[key] === 'object' && data[key] !== null && 
-                        (data[key].mmr || data[key].rank || data[key].tier)) {
+                    if (typeof data[key] === 'object' && data[key] !== null && (data[key].mmr || data[key].rank || data[key].tier)) {
                         playlists[key] = data[key];
                     }
                 });
-                
-                // Alternative: if wrapped in "ranks" or similar
                 if (Object.keys(playlists).length === 0 && data.ranks) {
                     playlists = data.ranks;
                 }
             }
 
             if (Object.keys(playlists).length === 0) {
-                // Fallback: show everything in one big card if structure unknown
-                const fallbackCard = document.createElement('div');
-                fallbackCard.className = "col-span-full bg-white/5 border border-white/10 rounded-3xl p-8";
-                fallbackCard.innerHTML = `
-                    <h3 class="text-xl font-semibold mb-4 text-orange-400">Full Response</h3>
-                    <p class="text-gray-400 text-sm mb-4">Could not auto-detect playlist structure. Showing raw data below.</p>
-                    <pre class="text-xs bg-black/40 p-4 rounded-2xl overflow-auto">${JSON.stringify(data, null, 2)}</pre>
-                `;
-                ranksGrid.appendChild(fallbackCard);
+                ranksGrid.innerHTML = `<div class="col-span-full bg-white/5 border border-white/10 rounded-3xl p-8 text-center">No playlist data found in response.</div>`;
                 return;
             }
 
-            // Render beautiful playlist cards
+            const rankIcons = {
+                "bronze": "https://static.wikia.nocookie.net/rocketleague/images/6/6c/Bronze1_rank_icon.png",
+                "silver": "https://static.wikia.nocookie.net/rocketleague/images/2/2f/Silver1_rank_icon.png",
+                "gold": "https://static.wikia.nocookie.net/rocketleague/images/0/0e/Gold1_rank_icon.png",
+                "platinum": "https://static.wikia.nocookie.net/rocketleague/images/4/4d/Platinum1_rank_icon.png",
+                "diamond": "https://static.wikia.nocookie.net/rocketleague/images/9/9b/Diamond1_rank_icon.png",
+                "champion": "https://static.wikia.nocookie.net/rocketleague/images/5/5e/Champion1_rank_icon.png",
+                "grand champion": "https://static.wikia.nocookie.net/rocketleague/images/0/0d/GrandChampion1_rank_icon.png",
+                "supersonic legend": "https://static.wikia.nocookie.net/rocketleague/images/0/0a/SupersonicLegend_rank_icon.png",
+                "unranked": "https://via.placeholder.com/64?text=?"
+            };
+
             Object.entries(playlists).forEach(([playlistName, stats]) => {
                 const niceName = playlistName
                     .replace(/([A-Z])/g, ' $1')
@@ -272,30 +240,40 @@
                     .replace('Standard', '3v3 Standard')
                     .trim();
 
-                const rankText = stats.rank || stats.tier_name || stats.tier || 'Unranked';
+                let rankText = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 const divText = stats.division !== undefined ? `Div ${stats.division}` : '';
                 const mmr = stats.mmr || stats.skill || stats.rating || '—';
                 const games = stats.matchesPlayed || stats.total_games || stats.games || '—';
                 const streak = stats.winStreak || stats.streak || stats.current_win_streak || '—';
 
+                let iconUrl = rankIcons.unranked;
+                for (const [key, url] of Object.entries(rankIcons)) {
+                    if (rankText.includes(key)) {
+                        iconUrl = url;
+                        break;
+                    }
+                }
+
                 const card = document.createElement('div');
                 card.className = `card bg-white/5 border border-white/10 rounded-3xl overflow-hidden`;
-                
+
                 card.innerHTML = `
                     <div class="playlist-header h-2"></div>
                     <div class="p-7">
                         <div class="flex justify-between items-start mb-6">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-orange-400">${niceName}</div>
-                                <div class="text-3xl font-bold mt-1 leading-none">${rankText}</div>
-                                ${divText ? `<div class="text-xl text-orange-300">${divText}</div>` : ''}
+                            <div class="flex items-center gap-4">
+                                <img src="${iconUrl}" alt="${rankText} icon" class="rank-icon">
+                                <div>
+                                    <div class="text-xs uppercase tracking-widest text-orange-400">${niceName}</div>
+                                    <div class="text-3xl font-bold mt-1 leading-none">${rankText.charAt(0).toUpperCase() + rankText.slice(1)}</div>
+                                    ${divText ? `<div class="text-xl text-orange-300">${divText}</div>` : ''}
+                                </div>
                             </div>
                             <div class="text-right">
                                 <div class="text-5xl font-mono font-bold text-orange-400">${mmr}</div>
                                 <div class="text-xs text-gray-400">MMR</div>
                             </div>
                         </div>
-                        
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div class="bg-black/30 rounded-2xl p-4">
                                 <div class="text-gray-400 text-xs">Games</div>
@@ -309,7 +287,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         ${Object.keys(stats).length > 5 ? `
                         <details class="mt-6 text-xs">
                             <summary class="cursor-pointer text-orange-400">More stats...</summary>
@@ -334,18 +311,14 @@
             document.getElementById('error').classList.add('hidden');
         }
 
-        // Allow Enter key on inputs
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const active = document.activeElement;
-                if (active.id === 'apiKey' || active.id === 'playerId') {
+                if (active.id === 'apiKey' || active.id === 'playerInput') {
                     fetchPlayerStats();
                 }
             }
         });
-
-        // Demo note
-        console.log('%c🚀 Rocket League Stats Site ready! Paste your RapidAPI key and an Epic ID to start.', 'color: #f97316; font-weight: bold');
     </script>
 </body>
 </html>
