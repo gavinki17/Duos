@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Prevent text selection/highlighting everywhere */
+        /* Prevent text selection */
         * {
             user-select: none;
             -webkit-user-select: none;
@@ -54,6 +54,7 @@
             border-color: #c084fc;
             box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.2);
             transform: scale(1.01);
+            background: rgba(0,0,0,0.6) !important; /* force dark bg on focus */
         }
         .pulse-glow {
             animation: pulse 5s infinite ease-in-out;
@@ -63,7 +64,7 @@
             50% { opacity: 1; }
         }
 
-        /* Red + Purple rank themes */
+        /* Rank themes */
         .rank-bronze    { background: linear-gradient(135deg, #2c0f14, #4a1a22); border-color: #9f1239; }
         .rank-silver    { background: linear-gradient(135deg, #2a1a2e, #4a2c52); border-color: #a78bfa; }
         .rank-gold      { background: linear-gradient(135deg, #3b1f0f, #6b3a1f); border-color: #fbbf24; }
@@ -74,16 +75,42 @@
         .rank-legend    { background: linear-gradient(135deg, #2e0a4a, #6d28d9); border-color: #c084fc; box-shadow: 0 0 32px rgba(168,85,247,0.18); }
         .rank-default   { background: linear-gradient(135deg, #0f001a, #1a0033); border-color: #6b21a8; }
 
-        /* Animated gradient button */
+        /* Animated gradient button + darker gradient outline */
         .purple-red-btn {
+            position: relative;
             background: linear-gradient(270deg, #7c3aed, #c084fc, #ec4899, #a855f7, #7c3aed);
             background-size: 300% 300%;
             animation: gradientFlow 8s ease infinite;
+            border: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .purple-red-btn::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(270deg, #4c1d95, #7c3aed, #a855f7, #7c3aed, #4c1d95);
+            background-size: 300% 300%;
+            animation: gradientFlow 8s ease infinite;
+            z-index: -2;
+            border-radius: 1rem;
+            filter: brightness(0.6) saturate(0.85); /* darker version */
+            opacity: 0.9;
+        }
+
+        .purple-red-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(18, 5, 25, 0.82); /* matches main-card bg to mask inner part */
+            border-radius: 0.875rem; /* slightly smaller to create outline thickness */
+            z-index: -1;
         }
 
         .purple-red-btn:hover {
-            animation-duration: 4s;
-            transform: scale(1.02);
+            filter: brightness(1.1);
+            /* NO change to animation speed on hover */
         }
 
         @keyframes gradientFlow {
@@ -134,7 +161,7 @@
             >
             <button
                 onclick="searchPlayer()"
-                class="mt-6 w-full purple-red-btn hover:brightness-110 py-5 rounded-2xl text-lg font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg"
+                class="mt-6 w-full purple-red-btn py-5 rounded-2xl text-lg font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg"
             >
                 <i class="fa-solid fa-rocket"></i>
                 LOAD PROFILE
