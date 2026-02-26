@@ -117,13 +117,30 @@
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             transform-origin: center center;
             will-change: transform;
+            background: linear-gradient(
+                90deg,
+                #a78bfa,
+                #c084fc,
+                #f472b6,
+                #ec4899,
+                #c084fc,
+                #a78bfa
+            );
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: gradientFlowTitle 7s ease infinite;
         }
         .title-container:hover .title-text {
-            transform:
-                rotateX(var(--rotate-x, 0deg))
-                rotateY(var(--rotate-y, 0deg))
-                skew(var(--skew-x, 0deg), var(--skew-y, 0deg))
-                scale(1.03);
+            animation-duration: 5s;
+            transform: scale(1.04);
+        }
+        @keyframes gradientFlowTitle {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         #toastContainer {
             position: fixed;
@@ -177,7 +194,7 @@
     <div id="searchPage" class="flex-1 flex flex-col items-center justify-center px-4 py-8">
         <div class="text-center mb-10 pulse-glow">
             <div class="title-container">
-                <h1 class="title-text text-6xl md:text-7xl font-black tracking-tighter bg-gradient-to-r from-purple-400 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent glow-gone">
+                <h1 class="title-text text-6xl md:text-7xl font-black tracking-tighter">
                     RLMath
                 </h1>
             </div>
@@ -247,39 +264,30 @@
         </div>
     </div>
     <div id="toastContainer"></div>
-
     <script>
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
-
         function showSearchPage() {
             document.getElementById('playerPage').classList.add('hidden');
             document.getElementById('searchPage').classList.remove('hidden');
         }
-
         function showPlayerPage() {
             document.getElementById('searchPage').classList.add('hidden');
             document.getElementById('playerPage').classList.remove('hidden');
         }
-
         function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
-
         function showError(msg) {
             document.getElementById('errorText').innerHTML = msg;
             document.getElementById('errorModal').classList.remove('hidden');
             hideLoading();
         }
-
         function hideError() { document.getElementById('errorModal').classList.add('hidden'); }
-
         function showNotification(message, type = 'error') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type} flex`;
-
             let icon = 'fa-circle-exclamation';
             let prefix = '';
-
             if (type === 'success') {
                 icon = 'fa-circle-check';
                 prefix = 'Success: ';
@@ -290,12 +298,10 @@
                 icon = 'fa-triangle-exclamation';
                 prefix = 'Error: ';
             }
-
             toast.innerHTML = `
                 <i class="fa-solid ${icon} toast-icon"></i>
                 <span>${prefix}${message}</span>
             `;
-
             container.appendChild(toast);
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => {
@@ -303,23 +309,18 @@
                 setTimeout(() => toast.remove(), 400);
             }, 5000);
         }
-
         async function searchPlayer() {
             let id = document.getElementById('playerInput').value.trim().replace(/\s/g, '');
-
             if (!id) {
                 showNotification("Please enter an Epic Account ID", "error");
                 return;
             }
-
             if (!/^[0-9a-fA-F]{32}$/.test(id)) {
                 showNotification("Invalid format.<br>Must be exactly 32 hexadecimal characters.", "error");
                 return;
             }
-
             showLoading();
             const url = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
-
             try {
                 const res = await fetch(url, {
                     headers: {
@@ -329,7 +330,6 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
-
                 if (!res.ok) {
                     if (res.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
                     else if (res.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
@@ -337,14 +337,11 @@
                     hideLoading();
                     return;
                 }
-
                 const data = await res.json();
                 window.currentData = data;
                 renderProfile(data, id);
-
                 const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
                 const statsData = {};
-
                 await Promise.all(statsToFetch.map(async stat => {
                     try {
                         const statRes = await fetch(`https://rocket-league1.p.rapidapi.com/stat/${id}/${stat}`, {
@@ -365,7 +362,6 @@
                         statsData[stat] = '—';
                     }
                 }));
-
                 renderStats(statsData);
                 showPlayerPage();
             } catch (err) {
@@ -374,7 +370,6 @@
                 hideLoading();
             }
         }
-
         function getRankClass(rankName) {
             rankName = rankName.toLowerCase();
             if (rankName.includes('bronze')) return 'rank-bronze';
@@ -387,16 +382,13 @@
             if (rankName.includes('supersonic legend')) return 'rank-legend';
             return 'rank-default';
         }
-
         function renderProfile(data, id) {
             const header = document.getElementById('playerHeader');
             const grid = document.getElementById('ranksGrid');
             const raw = document.getElementById('rawJson');
             raw.textContent = JSON.stringify(data, null, 2);
-
             let name = data.name || data.displayName || data.username || "Player";
             if (name.length > 24) name = name.slice(0, 21) + "...";
-
             header.innerHTML = `
                 <div class="w-28 h-28 bg-gradient-to-br from-purple-700 to-fuchsia-800 rounded-2xl flex items-center justify-center text-6xl shadow-xl flex-shrink-0">
                     🚀
@@ -409,7 +401,6 @@
                     </div>
                 </div>
             `;
-
             grid.innerHTML = '';
             let playlists = {};
             if (data && typeof data === 'object') {
@@ -421,12 +412,10 @@
                 });
                 if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
             }
-
             if (Object.keys(playlists).length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-16 text-purple-400/50 text-xl">No rank data available</div>`;
                 return;
             }
-
             const icons = {
                 "bronze": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
                 "silver": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
@@ -436,9 +425,8 @@
                 "champion": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
                 "grand champion": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
                 "supersonic legend": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "unranked": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png"
+                "unranked": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png?"
             };
-
             Object.entries(playlists).forEach(([key, stats]) => {
                 const title = key
                     .replace(/([A-Z])/g, ' $1')
@@ -446,13 +434,11 @@
                     .replace('Duel', '1v1')
                     .replace('Doubles', '2v2')
                     .replace('Standard', '3v3');
-
                 let rank = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 let div = stats.division !== undefined ? `Div ${stats.division}` : '';
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
                 let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
-
                 let icon = icons.unranked;
                 for (let k in icons) {
                     if (rank.includes(k)) {
@@ -460,9 +446,7 @@
                         break;
                     }
                 }
-
                 const themeClass = getRankClass(rank);
-
                 const card = `
                     <div class="rank-card ${themeClass} p-6 md:p-7">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
@@ -494,11 +478,9 @@
                 grid.innerHTML += card;
             });
         }
-
         function renderStats(stats) {
             const grid = document.getElementById('statsGrid');
             grid.innerHTML = '';
-
             const statDisplay = [
                 { key: 'goals', label: 'Goals', icon: 'fa-futbol' },
                 { key: 'assists', label: 'Assists', icon: 'fa-handshake' },
@@ -507,7 +489,6 @@
                 { key: 'mvps', label: 'MVPs', icon: 'fa-trophy' },
                 { key: 'wins', label: 'Wins', icon: 'fa-check-circle' }
             ];
-
             statDisplay.forEach(item => {
                 const value = stats[item.key] !== undefined && stats[item.key] !== null ? stats[item.key] : '—';
                 const card = `
@@ -520,12 +501,10 @@
                 grid.innerHTML += card;
             });
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             const titleContainer = document.querySelector('.title-container');
             const titleText = document.querySelector('.title-text');
             if (!titleContainer || !titleText) return;
-
             titleContainer.addEventListener('mousemove', (e) => {
                 const rect = titleContainer.getBoundingClientRect();
                 const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
@@ -539,7 +518,6 @@
                 titleText.style.setProperty('--rotate-x', rotateX);
                 titleText.style.setProperty('--rotate-y', rotateY);
             });
-
             titleContainer.addEventListener('mouseleave', () => {
                 titleText.style.setProperty('--skew-x', '0deg');
                 titleText.style.setProperty('--skew-y', '0deg');
@@ -547,7 +525,6 @@
                 titleText.style.setProperty('--rotate-y', '0deg');
             });
         });
-
         document.getElementById('playerInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') searchPlayer();
         });
