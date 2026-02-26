@@ -14,9 +14,7 @@
             font-family: system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
         }
-        .glow-gone {
-            text-shadow: none;
-        }
+        .glow-gone { text-shadow: none; }
         .main-card {
             background: rgba(12, 15, 30, 0.75);
             border: 1px solid rgba(59, 130, 246, 0.25);
@@ -40,9 +38,7 @@
             filter: drop-shadow(0 8px 16px rgba(0,0,0,0.7));
             transition: transform 0.4s ease;
         }
-        .rank-card:hover .rank-icon {
-            transform: scale(1.15);
-        }
+        .rank-card:hover .rank-icon { transform: scale(1.15); }
         .input-focus {
             transition: all 0.4s ease;
         }
@@ -58,15 +54,15 @@
             0%, 100% { opacity: 0.92; }
             50% { opacity: 1; }
         }
-        .rank-bronze   { background: linear-gradient(135deg, #3b2a1e, #5c4426); border-color: #92400e; }
-        .rank-silver   { background: linear-gradient(135deg, #4b5563, #9ca3af); border-color: #cbd5e1; }
-        .rank-gold     { background: linear-gradient(135deg, #5c3d00, #a67c00); border-color: #fbbf24; }
+        .rank-bronze { background: linear-gradient(135deg, #3b2a1e, #5c4426); border-color: #92400e; }
+        .rank-silver { background: linear-gradient(135deg, #4b5563, #9ca3af); border-color: #cbd5e1; }
+        .rank-gold { background: linear-gradient(135deg, #5c3d00, #a67c00); border-color: #fbbf24; }
         .rank-platinum { background: linear-gradient(135deg, #1e293b, #64748b); border-color: #94a3b8; }
-        .rank-diamond  { background: linear-gradient(135deg, #1e40af, #3b82f6); border-color: #60a5fa; }
+        .rank-diamond { background: linear-gradient(135deg, #1e40af, #3b82f6); border-color: #60a5fa; }
         .rank-champion { background: linear-gradient(135deg, #1e3a8a, #2563eb); border-color: #3b82f6; }
-        .rank-grand    { background: linear-gradient(135deg, #1e293b, #1d4ed8); border-color: #3b82f6; }
-        .rank-legend   { background: linear-gradient(135deg, #0f172a, #1e40af); border-color: #60a5fa; box-shadow: 0 0 40px rgba(59,130,246,0.18); }
-        .rank-default  { background: linear-gradient(135deg, #111827, #1e293b); border-color: #4b5563; }
+        .rank-grand { background: linear-gradient(135deg, #1e293b, #1d4ed8); border-color: #3b82f6; }
+        .rank-legend { background: linear-gradient(135deg, #0f172a, #1e40af); border-color: #60a5fa; box-shadow: 0 0 40px rgba(59,130,246,0.18); }
+        .rank-default { background: linear-gradient(135deg, #111827, #1e293b); border-color: #4b5563; }
         .blue-btn {
             background: linear-gradient(to right, #2563eb, #3b82f6, #60a5fa);
         }
@@ -114,11 +110,18 @@
                 <i class="fa-solid fa-arrow-left-long"></i>
                 Back
             </button>
-            <div id="playerHeader" class="main-card p-10 md:p-14 mb-16 flex flex-col md:flex-row items-center gap-10 animate-fade-in"></div>
+            <div id="playerHeader" class="main-card p-10 md:p-14 mb-16 flex flex-col md:flex-row items-center gap-10"></div>
+            
             <h2 class="text-5xl font-black mb-10 text-center md:text-left bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
                 Current Ranks
             </h2>
             <div id="ranksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+
+            <h2 class="text-5xl font-black mt-20 mb-10 text-center md:text-left bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                Career Stats (All-Time)
+            </h2>
+            <div id="statsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+
             <details class="mt-20 main-card p-10 text-sm">
                 <summary class="cursor-pointer flex items-center gap-4 text-blue-400 font-medium text-lg">
                     <i class="fa-solid fa-code"></i>
@@ -148,14 +151,17 @@
 
     <script>
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
+
         function showSearchPage() {
             document.getElementById('playerPage').classList.add('hidden');
             document.getElementById('searchPage').classList.remove('hidden');
         }
+
         function showPlayerPage() {
             document.getElementById('searchPage').classList.add('hidden');
             document.getElementById('playerPage').classList.remove('hidden');
         }
+
         function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
         function showError(msg) {
@@ -164,6 +170,7 @@
             hideLoading();
         }
         function hideError() { document.getElementById('errorModal').classList.add('hidden'); }
+
         async function searchPlayer() {
             let id = document.getElementById('playerInput').value.trim().replace(/\s/g, '');
             if (!id) return alert("Please enter an Epic Account ID");
@@ -171,8 +178,11 @@
                 showError("Invalid format.<br>Must be exactly 32 hexadecimal characters.");
                 return;
             }
+
             showLoading();
+
             const url = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
+
             try {
                 const res = await fetch(url, {
                     headers: {
@@ -182,22 +192,53 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
+
                 if (!res.ok) {
                     if (res.status === 404) showError("Player not found.<br>Check the Epic ID.");
                     else if (res.status === 429) showError("Rate limit reached.<br>Try again later.");
                     else showError(`Error ${res.status}`);
                     return;
                 }
+
                 const data = await res.json();
                 window.currentData = data;
                 renderProfile(data, id);
+
+                const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
+                const statsData = {};
+
+                await Promise.all(statsToFetch.map(async stat => {
+                    try {
+                        const statRes = await fetch(`https://rocket-league1.p.rapidapi.com/stat/${id}/${stat}`, {
+                            headers: {
+                                'X-RapidAPI-Key': API_KEY,
+                                'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com',
+                                'Accept-Encoding': 'identity',
+                                'x-rapidapi-ua': 'RapidAPI-Playground'
+                            }
+                        });
+                        if (statRes.ok) {
+                            const json = await statRes.json();
+                            statsData[stat] = json.value !== undefined ? json.value : json;
+                        } else {
+                            statsData[stat] = '—';
+                        }
+                    } catch {
+                        statsData[stat] = '—';
+                    }
+                }));
+
+                renderStats(statsData);
+
                 showPlayerPage();
+
             } catch (err) {
                 showError("Failed to connect.<br>Try again later.");
             } finally {
                 hideLoading();
             }
         }
+
         function getRankClass(rankName) {
             rankName = rankName.toLowerCase();
             if (rankName.includes('bronze')) return 'rank-bronze';
@@ -210,13 +251,16 @@
             if (rankName.includes('supersonic legend')) return 'rank-legend';
             return 'rank-default';
         }
+
         function renderProfile(data, id) {
             const header = document.getElementById('playerHeader');
             const grid = document.getElementById('ranksGrid');
             const raw = document.getElementById('rawJson');
             raw.textContent = JSON.stringify(data, null, 2);
+
             let name = data.name || data.displayName || data.username || "Player";
             if (name.length > 24) name = name.slice(0, 21) + "...";
+
             header.innerHTML = `
                 <div class="w-32 h-32 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl flex items-center justify-center text-8xl shadow-2xl flex-shrink-0">
                     🚀
@@ -229,7 +273,9 @@
                     </div>
                 </div>
             `;
+
             grid.innerHTML = '';
+
             let playlists = {};
             if (data && typeof data === 'object') {
                 Object.keys(data).forEach(k => {
@@ -240,10 +286,12 @@
                 });
                 if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
             }
+
             if (Object.keys(playlists).length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-20 text-blue-400/50 text-2xl">No rank data available</div>`;
                 return;
             }
+
             const icons = {
                 "bronze": "https://static.wikia.nocookie.net/rocketleague/images/6/6c/Bronze1_rank_icon.png",
                 "silver": "https://static.wikia.nocookie.net/rocketleague/images/2/2f/Silver1_rank_icon.png",
@@ -255,6 +303,7 @@
                 "supersonic legend": "https://static.wikia.nocookie.net/rocketleague/images/0/0a/SupersonicLegend_rank_icon.png",
                 "unranked": "https://via.placeholder.com/90x90/222/aaa?text=?"
             };
+
             Object.entries(playlists).forEach(([key, stats]) => {
                 const title = key
                     .replace(/([A-Z])/g, ' $1')
@@ -262,11 +311,13 @@
                     .replace('Duel', '1v1')
                     .replace('Doubles', '2v2')
                     .replace('Standard', '3v3');
+
                 let rank = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 let div = stats.division !== undefined ? `Div ${stats.division}` : '';
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
                 let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
+
                 let icon = icons.unranked;
                 for (let k in icons) {
                     if (rank.includes(k)) {
@@ -274,7 +325,9 @@
                         break;
                     }
                 }
+
                 const themeClass = getRankClass(rank);
+
                 const card = `
                     <div class="rank-card ${themeClass} p-8 md:p-10">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 md:gap-8">
@@ -306,6 +359,33 @@
                 grid.innerHTML += card;
             });
         }
+
+        function renderStats(stats) {
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = '';
+
+            const statDisplay = [
+                { key: 'goals', label: 'Goals', icon: 'fa-futbol' },
+                { key: 'assists', label: 'Assists', icon: 'fa-handshake' },
+                { key: 'saves', label: 'Saves', icon: 'fa-shield-alt' },
+                { key: 'shots', label: 'Shots', icon: 'fa-bullseye' },
+                { key: 'mvps', label: 'MVPs', icon: 'fa-trophy' },
+                { key: 'wins', label: 'Wins', icon: 'fa-check-circle' }
+            ];
+
+            statDisplay.forEach(item => {
+                const value = stats[item.key] !== undefined && stats[item.key] !== null ? stats[item.key] : '—';
+                const card = `
+                    <div class="main-card p-8 text-center transform hover:scale-105 transition-all">
+                        <i class="fa-solid ${item.icon} text-6xl text-blue-400 mb-4"></i>
+                        <div class="text-4xl md:text-5xl font-black text-white">${value}</div>
+                        <div class="text-xl md:text-2xl text-blue-300 mt-2">${item.label}</div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
         document.getElementById('playerInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') searchPlayer();
         });
