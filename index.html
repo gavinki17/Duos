@@ -132,7 +132,6 @@
             -webkit-text-fill-color: transparent;
             color: transparent;
             animation: gradientFlowTitle 7s ease infinite;
-            /* Apply the dynamic 3D/skew transform */
             transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) skew(var(--skew-x, 0deg), var(--skew-y, 0deg));
         }
         .title-container:hover .title-text {
@@ -329,11 +328,8 @@
                 showNotification("Invalid format.<br>Must be exactly 32 hexadecimal characters.", "error");
                 return;
             }
-
             showLoading();
-
             const url = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
-
             try {
                 const res = await fetch(url, {
                     headers: {
@@ -343,7 +339,6 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
-
                 if (!res.ok) {
                     if (res.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
                     else if (res.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
@@ -351,14 +346,11 @@
                     hideLoading();
                     return;
                 }
-
                 const data = await res.json();
                 window.currentData = data;
                 renderProfile(data, id);
-
                 const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
                 const statsData = {};
-
                 await Promise.all(statsToFetch.map(async stat => {
                     try {
                         const statRes = await fetch(`https://rocket-league1.p.rapidapi.com/stat/${id}/${stat}`, {
@@ -379,10 +371,8 @@
                         statsData[stat] = '—';
                     }
                 }));
-
                 renderStats(statsData);
                 showPlayerPage();
-
             } catch (err) {
                 showNotification("Failed to connect.<br>Try again later.", "error");
             } finally {
@@ -410,14 +400,13 @@
             raw.textContent = JSON.stringify(data, null, 2);
 
             let name = data.name || data.displayName || data.username || "Player";
-            if (name.length > 24) name = name.slice(0, 21) + "...";
 
             header.innerHTML = `
                 <div class="w-28 h-28 bg-gradient-to-br from-purple-700 to-fuchsia-800 rounded-2xl flex items-center justify-center text-6xl shadow-xl flex-shrink-0">
                     🚀
                 </div>
                 <div class="text-center md:text-left w-full min-w-0">
-                    <div class="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+                    <div class="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent break-words">
                         ${name}
                     </div>
                     <div class="mt-3 flex flex-wrap items-center gap-3 justify-center md:justify-start">
@@ -500,7 +489,9 @@
                             >
                             <div class="flex-1 text-center sm:text-left min-w-0">
                                 <div class="text-xs uppercase tracking-widest opacity-90 mb-1">${title}</div>
-                                <div class="text-2xl md:text-3xl font-black break-words leading-tight">${rankLower.charAt(0).toUpperCase() + rankLower.slice(1)}</div>
+                                <div class="text-2xl md:text-3xl font-black whitespace-nowrap overflow-hidden text-ellipsis max-w-full leading-tight">
+                                    ${rankLower.charAt(0).toUpperCase() + rankLower.slice(1)}
+                                </div>
                                 ${divText ? `<div class="text-lg opacity-90 mt-1">${divText}</div>` : ''}
                             </div>
                             <div class="text-center sm:text-right mt-3 sm:mt-0 min-w-[100px]">
@@ -529,7 +520,6 @@
         function renderStats(stats) {
             const grid = document.getElementById('statsGrid');
             grid.innerHTML = '';
-
             const statDisplay = [
                 { key: 'goals', label: 'Goals', icon: 'fa-futbol' },
                 { key: 'assists', label: 'Assists', icon: 'fa-handshake' },
@@ -538,7 +528,6 @@
                 { key: 'mvps', label: 'MVPs', icon: 'fa-trophy' },
                 { key: 'wins', label: 'Wins', icon: 'fa-check-circle' }
             ];
-
             statDisplay.forEach(item => {
                 const value = stats[item.key] !== undefined && stats[item.key] !== null ? stats[item.key] : '—';
                 const card = `
@@ -552,28 +541,23 @@
             });
         }
 
-        // Title 3D hover effect
         document.addEventListener('DOMContentLoaded', () => {
             const titleContainer = document.querySelector('.title-container');
             const titleText = document.querySelector('.title-text');
             if (!titleContainer || !titleText) return;
-
             titleContainer.addEventListener('mousemove', (e) => {
                 const rect = titleContainer.getBoundingClientRect();
                 const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
                 const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-
                 const skewX = x * 12 + 'deg';
                 const skewY = -y * 6 + 'deg';
                 const rotateY = x * 15 + 'deg';
                 const rotateX = -y * 12 + 'deg';
-
                 titleText.style.setProperty('--skew-x', skewX);
                 titleText.style.setProperty('--skew-y', skewY);
                 titleText.style.setProperty('--rotate-x', rotateX);
                 titleText.style.setProperty('--rotate-y', rotateY);
             });
-
             titleContainer.addEventListener('mouseleave', () => {
                 titleText.style.setProperty('--skew-x', '0deg');
                 titleText.style.setProperty('--skew-y', '0deg');
