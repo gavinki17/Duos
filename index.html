@@ -138,8 +138,8 @@
             transform: scale(1.04);
         }
         @keyframes gradientFlowTitle {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
         #toastContainer {
@@ -416,16 +416,16 @@
                 grid.innerHTML = `<div class="col-span-full text-center py-16 text-purple-400/50 text-xl">No rank data available</div>`;
                 return;
             }
-            const icons = {
-                "bronze": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "silver": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "gold": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "platinum": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "diamond": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "champion": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "grand champion": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "supersonic legend": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-                "unranked": "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png?"
+            const tierOffsets = {
+                "unranked": 0,
+                "bronze": 1,
+                "silver": 4,
+                "gold": 7,
+                "platinum": 10,
+                "diamond": 13,
+                "champion": 16,
+                "grand champion": 19,
+                "supersonic legend": 22
             };
             Object.entries(playlists).forEach(([key, stats]) => {
                 const title = key
@@ -434,27 +434,32 @@
                     .replace('Duel', '1v1')
                     .replace('Doubles', '2v2')
                     .replace('Standard', '3v3');
-                let rank = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
-                let div = stats.division !== undefined ? `Div ${stats.division}` : '';
+                let rankLower = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
+                let division = stats.division || stats.div || 1;
+                if (division > 4) division = 4;
+                if (division < 1) division = 1;
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
                 let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
-                let icon = icons.unranked;
-                for (let k in icons) {
-                    if (rank.includes(k)) {
-                        icon = icons[k];
+                let baseNum = tierOffsets.unranked;
+                for (let t in tierOffsets) {
+                    if (rankLower.includes(t)) {
+                        baseNum = tierOffsets[t];
                         break;
                     }
                 }
-                const themeClass = getRankClass(rank);
+                let imgNum = baseNum + (division - 1);
+                let icon = `https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-${imgNum}.png`;
+                const themeClass = getRankClass(rankLower);
+                const divText = division ? `Div ${division}` : '';
                 const card = `
                     <div class="rank-card ${themeClass} p-6 md:p-7">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-                            <img src="${icon}" alt="${rank}" class="rank-icon flex-shrink-0">
+                            <img src="${icon}" alt="${rankLower}" class="rank-icon flex-shrink-0" onerror="this.src='https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png'">
                             <div class="flex-1 text-center sm:text-left min-w-0">
                                 <div class="text-xs uppercase tracking-widest opacity-90 mb-1">${title}</div>
-                                <div class="text-2xl md:text-3xl font-black break-words leading-tight">${rank.charAt(0).toUpperCase() + rank.slice(1)}</div>
-                                ${div ? `<div class="text-lg opacity-90 mt-1">${div}</div>` : ''}
+                                <div class="text-2xl md:text-3xl font-black break-words leading-tight">${rankLower.charAt(0).toUpperCase() + rankLower.slice(1)}</div>
+                                ${divText ? `<div class="text-lg opacity-90 mt-1">${divText}</div>` : ''}
                             </div>
                             <div class="text-center sm:text-right mt-3 sm:mt-0 min-w-[100px]">
                                 <div class="text-4xl md:text-5xl font-mono font-black">${mmr}</div>
