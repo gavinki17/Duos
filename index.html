@@ -132,10 +132,12 @@
             -webkit-text-fill-color: transparent;
             color: transparent;
             animation: gradientFlowTitle 7s ease infinite;
+            /* Apply the dynamic 3D/skew transform */
+            transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) skew(var(--skew-x, 0deg), var(--skew-y, 0deg));
         }
         .title-container:hover .title-text {
             animation-duration: 5s;
-            transform: scale(1.04);
+            transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) skew(var(--skew-x, 0deg), var(--skew-y, 0deg)) scale(1.04);
         }
         @keyframes gradientFlowTitle {
             0% { background-position: 0% 50%; }
@@ -264,24 +266,31 @@
         </div>
     </div>
     <div id="toastContainer"></div>
+
     <script>
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
+
         function showSearchPage() {
             document.getElementById('playerPage').classList.add('hidden');
             document.getElementById('searchPage').classList.remove('hidden');
         }
+
         function showPlayerPage() {
             document.getElementById('searchPage').classList.add('hidden');
             document.getElementById('playerPage').classList.remove('hidden');
         }
+
         function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
+
         function showError(msg) {
             document.getElementById('errorText').innerHTML = msg;
             document.getElementById('errorModal').classList.remove('hidden');
             hideLoading();
         }
+
         function hideError() { document.getElementById('errorModal').classList.add('hidden'); }
+
         function showNotification(message, type = 'error') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -309,6 +318,7 @@
                 setTimeout(() => toast.remove(), 400);
             }, 5000);
         }
+
         async function searchPlayer() {
             let id = document.getElementById('playerInput').value.trim().replace(/\s/g, '');
             if (!id) {
@@ -319,8 +329,11 @@
                 showNotification("Invalid format.<br>Must be exactly 32 hexadecimal characters.", "error");
                 return;
             }
+
             showLoading();
+
             const url = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
+
             try {
                 const res = await fetch(url, {
                     headers: {
@@ -330,6 +343,7 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
+
                 if (!res.ok) {
                     if (res.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
                     else if (res.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
@@ -337,11 +351,14 @@
                     hideLoading();
                     return;
                 }
+
                 const data = await res.json();
                 window.currentData = data;
                 renderProfile(data, id);
+
                 const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
                 const statsData = {};
+
                 await Promise.all(statsToFetch.map(async stat => {
                     try {
                         const statRes = await fetch(`https://rocket-league1.p.rapidapi.com/stat/${id}/${stat}`, {
@@ -362,14 +379,17 @@
                         statsData[stat] = '—';
                     }
                 }));
+
                 renderStats(statsData);
                 showPlayerPage();
+
             } catch (err) {
                 showNotification("Failed to connect.<br>Try again later.", "error");
             } finally {
                 hideLoading();
             }
         }
+
         function getRankClass(rankName) {
             rankName = rankName.toLowerCase();
             if (rankName.includes('bronze')) return 'rank-bronze';
@@ -382,26 +402,33 @@
             if (rankName.includes('supersonic legend')) return 'rank-legend';
             return 'rank-default';
         }
+
         function renderProfile(data, id) {
             const header = document.getElementById('playerHeader');
             const grid = document.getElementById('ranksGrid');
             const raw = document.getElementById('rawJson');
             raw.textContent = JSON.stringify(data, null, 2);
+
             let name = data.name || data.displayName || data.username || "Player";
             if (name.length > 24) name = name.slice(0, 21) + "...";
+
             header.innerHTML = `
                 <div class="w-28 h-28 bg-gradient-to-br from-purple-700 to-fuchsia-800 rounded-2xl flex items-center justify-center text-6xl shadow-xl flex-shrink-0">
                     🚀
                 </div>
                 <div class="text-center md:text-left w-full min-w-0">
-                    <div class="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent break-words">${name}</div>
+                    <div class="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+                        ${name}
+                    </div>
                     <div class="mt-3 flex flex-wrap items-center gap-3 justify-center md:justify-start">
                         <span class="px-4 py-1.5 bg-purple-950/60 text-purple-300 font-mono rounded-xl text-xs whitespace-nowrap">EPIC ID</span>
                         <span class="text-purple-400/70 font-mono text-xs break-all">${id}</span>
                     </div>
                 </div>
             `;
+
             grid.innerHTML = '';
+
             let playlists = {};
             if (data && typeof data === 'object') {
                 Object.keys(data).forEach(k => {
@@ -412,10 +439,12 @@
                 });
                 if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
             }
+
             if (Object.keys(playlists).length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-16 text-purple-400/50 text-xl">No rank data available</div>`;
                 return;
             }
+
             const tierOffsets = {
                 "unranked": 0,
                 "bronze": 1,
@@ -427,6 +456,7 @@
                 "grand champion": 19,
                 "supersonic legend": 22
             };
+
             Object.entries(playlists).forEach(([key, stats]) => {
                 const title = key
                     .replace(/([A-Z])/g, ' $1')
@@ -434,13 +464,16 @@
                     .replace('Duel', '1v1')
                     .replace('Doubles', '2v2')
                     .replace('Standard', '3v3');
+
                 let rankLower = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 let division = stats.division || stats.div || 1;
                 if (division > 4) division = 4;
                 if (division < 1) division = 1;
+
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
                 let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
+
                 let baseNum = tierOffsets.unranked;
                 for (let t in tierOffsets) {
                     if (rankLower.includes(t)) {
@@ -448,14 +481,23 @@
                         break;
                     }
                 }
+
                 let imgNum = baseNum + (division - 1);
                 let icon = `https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-${imgNum}.png`;
+                const fallbackIcon = 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png';
+
                 const themeClass = getRankClass(rankLower);
                 const divText = division ? `Div ${division}` : '';
+
                 const card = `
                     <div class="rank-card ${themeClass} p-6 md:p-7">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-                            <img src="${icon}" alt="${rankLower}" class="rank-icon flex-shrink-0" onerror="this.src='https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png'">
+                            <img 
+                                src="${icon}" 
+                                alt="${rankLower}" 
+                                class="rank-icon flex-shrink-0" 
+                                onerror="this.onerror=null; this.src='${fallbackIcon}';"
+                            >
                             <div class="flex-1 text-center sm:text-left min-w-0">
                                 <div class="text-xs uppercase tracking-widest opacity-90 mb-1">${title}</div>
                                 <div class="text-2xl md:text-3xl font-black break-words leading-tight">${rankLower.charAt(0).toUpperCase() + rankLower.slice(1)}</div>
@@ -483,9 +525,11 @@
                 grid.innerHTML += card;
             });
         }
+
         function renderStats(stats) {
             const grid = document.getElementById('statsGrid');
             grid.innerHTML = '';
+
             const statDisplay = [
                 { key: 'goals', label: 'Goals', icon: 'fa-futbol' },
                 { key: 'assists', label: 'Assists', icon: 'fa-handshake' },
@@ -494,6 +538,7 @@
                 { key: 'mvps', label: 'MVPs', icon: 'fa-trophy' },
                 { key: 'wins', label: 'Wins', icon: 'fa-check-circle' }
             ];
+
             statDisplay.forEach(item => {
                 const value = stats[item.key] !== undefined && stats[item.key] !== null ? stats[item.key] : '—';
                 const card = `
@@ -506,23 +551,29 @@
                 grid.innerHTML += card;
             });
         }
+
+        // Title 3D hover effect
         document.addEventListener('DOMContentLoaded', () => {
             const titleContainer = document.querySelector('.title-container');
             const titleText = document.querySelector('.title-text');
             if (!titleContainer || !titleText) return;
+
             titleContainer.addEventListener('mousemove', (e) => {
                 const rect = titleContainer.getBoundingClientRect();
                 const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
                 const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+
                 const skewX = x * 12 + 'deg';
                 const skewY = -y * 6 + 'deg';
                 const rotateY = x * 15 + 'deg';
                 const rotateX = -y * 12 + 'deg';
+
                 titleText.style.setProperty('--skew-x', skewX);
                 titleText.style.setProperty('--skew-y', skewY);
                 titleText.style.setProperty('--rotate-x', rotateX);
                 titleText.style.setProperty('--rotate-y', rotateY);
             });
+
             titleContainer.addEventListener('mouseleave', () => {
                 titleText.style.setProperty('--skew-x', '0deg');
                 titleText.style.setProperty('--skew-y', '0deg');
@@ -530,6 +581,7 @@
                 titleText.style.setProperty('--rotate-y', '0deg');
             });
         });
+
         document.getElementById('playerInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') searchPlayer();
         });
