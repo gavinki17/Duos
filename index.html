@@ -265,7 +265,6 @@
         </div>
     </div>
     <div id="toastContainer"></div>
-
     <script>
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
 
@@ -281,13 +280,11 @@
 
         function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
-
         function showError(msg) {
             document.getElementById('errorText').innerHTML = msg;
             document.getElementById('errorModal').classList.remove('hidden');
             hideLoading();
         }
-
         function hideError() { document.getElementById('errorModal').classList.add('hidden'); }
 
         function showNotification(message, type = 'error') {
@@ -318,6 +315,25 @@
             }, 5000);
         }
 
+        async function fetchPlayerName(id) {
+            const url = `https://rocket-league1.p.rapidapi.com/profile/${id}`;
+            try {
+                const res = await fetch(url, {
+                    headers: {
+                        'X-RapidAPI-Key': API_KEY,
+                        'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com',
+                        'Accept-Encoding': 'identity',
+                        'x-rapidapi-ua': 'RapidAPI-Playground'
+                    }
+                });
+                if (!res.ok) return null;
+                const data = await res.json();
+                return data.name || data.displayName || data.username || data.playerName || null;
+            } catch {
+                return null;
+            }
+        }
+
         async function searchPlayer() {
             let id = document.getElementById('playerInput').value.trim().replace(/\s/g, '');
             if (!id) {
@@ -329,9 +345,12 @@
                 return;
             }
             showLoading();
-            const url = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
+
             try {
-                const res = await fetch(url, {
+                let playerName = await fetchPlayerName(id);
+
+                const ranksUrl = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
+                const ranksRes = await fetch(ranksUrl, {
                     headers: {
                         'X-RapidAPI-Key': API_KEY,
                         'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com',
@@ -339,16 +358,24 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
-                if (!res.ok) {
-                    if (res.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
-                    else if (res.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
-                    else showNotification(`Error ${res.status}`, "error");
+
+                if (!ranksRes.ok) {
+                    if (ranksRes.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
+                    else if (ranksRes.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
+                    else showNotification(`Error ${ranksRes.status}`, "error");
                     hideLoading();
                     return;
                 }
-                const data = await res.json();
+
+                const data = await ranksRes.json();
                 window.currentData = data;
-                renderProfile(data, id);
+
+                if (!playerName) {
+                    playerName = data.name || data.displayName || data.username || "Player";
+                }
+
+                renderProfile(data, id, playerName);
+
                 const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
                 const statsData = {};
                 await Promise.all(statsToFetch.map(async stat => {
@@ -393,13 +420,13 @@
             return 'rank-default';
         }
 
-        function renderProfile(data, id) {
+        function renderProfile(data, id, forcedName = null) {
             const header = document.getElementById('playerHeader');
             const grid = document.getElementById('ranksGrid');
             const raw = document.getElementById('rawJson');
             raw.textContent = JSON.stringify(data, null, 2);
 
-            let name = data.name || data.displayName || data.username || "Player";
+            let name = forcedName || data.name || data.displayName || data.username || "Player";
 
             header.innerHTML = `
                 <div class="w-28 h-28 bg-gradient-to-br from-purple-700 to-fuchsia-800 rounded-2xl flex items-center justify-center text-6xl shadow-xl flex-shrink-0">
@@ -417,7 +444,6 @@
             `;
 
             grid.innerHTML = '';
-
             let playlists = {};
             if (data && typeof data === 'object') {
                 Object.keys(data).forEach(k => {
@@ -470,7 +496,6 @@
                         break;
                     }
                 }
-
                 let imgNum = baseNum + (division - 1);
                 let icon = `https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-${imgNum}.png`;
                 const fallbackIcon = 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png';
@@ -481,10 +506,10 @@
                 const card = `
                     <div class="rank-card ${themeClass} p-6 md:p-7">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-                            <img 
-                                src="${icon}" 
-                                alt="${rankLower}" 
-                                class="rank-icon flex-shrink-0" 
+                            <img
+                                src="${icon}"
+                                alt="${rankLower}"
+                                class="rank-icon flex-shrink-0"
                                 onerror="this.onerror=null; this.src='${fallbackIcon}';"
                             >
                             <div class="flex-1 text-center sm:text-left min-w-0">
