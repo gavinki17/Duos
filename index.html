@@ -111,12 +111,13 @@
             position: relative;
             display: inline-block;
             perspective: 1000px;
-            padding-bottom: 1rem;
+            padding-bottom: 2rem;
+            overflow: visible !important;
         }
         .title-text {
-            display: inline-block;
+            display: block;
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            transform-origin: center center;
+            transform-origin: center bottom;
             will-change: transform;
             background: linear-gradient(
                 90deg,
@@ -135,7 +136,8 @@
             animation: gradientFlowTitle 7s ease infinite;
             transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) skew(var(--skew-x, 0deg), var(--skew-y, 0deg));
             line-height: 1.2;
-            padding-bottom: 0.25rem;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
         .title-container:hover .title-text {
             animation-duration: 5s;
@@ -549,10 +551,10 @@
                 const rect = titleContainer.getBoundingClientRect();
                 const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
                 const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-                const skewX = x * 12 + 'deg';
-                const skewY = -y * 6 + 'deg';
-                const rotateY = x * 15 + 'deg';
-                const rotateX = -y * 12 + 'deg';
+                const skewX = x * 8 + 'deg';
+                const skewY = -y * 4 + 'deg';
+                const rotateY = x * 10 + 'deg';
+                const rotateX = -y * 8 + 'deg';
                 titleText.style.setProperty('--skew-x', skewX);
                 titleText.style.setProperty('--skew-y', skewY);
                 titleText.style.setProperty('--rotate-x', rotateX);
