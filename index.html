@@ -111,6 +111,7 @@
             position: relative;
             display: inline-block;
             perspective: 1000px;
+            padding-bottom: 1rem;
         }
         .title-text {
             display: inline-block;
@@ -133,6 +134,8 @@
             color: transparent;
             animation: gradientFlowTitle 7s ease infinite;
             transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) skew(var(--skew-x, 0deg), var(--skew-y, 0deg));
+            line-height: 1.1;
+            padding-bottom: 0.25rem;
         }
         .title-container:hover .title-text {
             animation-duration: 5s;
@@ -267,17 +270,14 @@
     <div id="toastContainer"></div>
     <script>
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
-
         function showSearchPage() {
             document.getElementById('playerPage').classList.add('hidden');
             document.getElementById('searchPage').classList.remove('hidden');
         }
-
         function showPlayerPage() {
             document.getElementById('searchPage').classList.add('hidden');
             document.getElementById('playerPage').classList.remove('hidden');
         }
-
         function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
         function showError(msg) {
@@ -286,7 +286,6 @@
             hideLoading();
         }
         function hideError() { document.getElementById('errorModal').classList.add('hidden'); }
-
         function showNotification(message, type = 'error') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -314,7 +313,6 @@
                 setTimeout(() => toast.remove(), 400);
             }, 5000);
         }
-
         async function fetchPlayerName(id) {
             const url = `https://rocket-league1.p.rapidapi.com/profile/${id}`;
             try {
@@ -333,7 +331,6 @@
                 return null;
             }
         }
-
         async function searchPlayer() {
             let id = document.getElementById('playerInput').value.trim().replace(/\s/g, '');
             if (!id) {
@@ -345,10 +342,8 @@
                 return;
             }
             showLoading();
-
             try {
                 let playerName = await fetchPlayerName(id);
-
                 const ranksUrl = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
                 const ranksRes = await fetch(ranksUrl, {
                     headers: {
@@ -358,7 +353,6 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
-
                 if (!ranksRes.ok) {
                     if (ranksRes.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
                     else if (ranksRes.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
@@ -366,16 +360,12 @@
                     hideLoading();
                     return;
                 }
-
                 const data = await ranksRes.json();
                 window.currentData = data;
-
                 if (!playerName) {
                     playerName = data.name || data.displayName || data.username || "Player";
                 }
-
                 renderProfile(data, id, playerName);
-
                 const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
                 const statsData = {};
                 await Promise.all(statsToFetch.map(async stat => {
@@ -406,7 +396,6 @@
                 hideLoading();
             }
         }
-
         function getRankClass(rankName) {
             rankName = rankName.toLowerCase();
             if (rankName.includes('bronze')) return 'rank-bronze';
@@ -419,15 +408,12 @@
             if (rankName.includes('supersonic legend')) return 'rank-legend';
             return 'rank-default';
         }
-
         function renderProfile(data, id, forcedName = null) {
             const header = document.getElementById('playerHeader');
             const grid = document.getElementById('ranksGrid');
             const raw = document.getElementById('rawJson');
             raw.textContent = JSON.stringify(data, null, 2);
-
             let name = forcedName || data.name || data.displayName || data.username || "Player";
-
             header.innerHTML = `
                 <div class="w-28 h-28 bg-gradient-to-br from-purple-700 to-fuchsia-800 rounded-2xl flex items-center justify-center text-6xl shadow-xl flex-shrink-0">
                     🚀
@@ -442,7 +428,6 @@
                     </div>
                 </div>
             `;
-
             grid.innerHTML = '';
             let playlists = {};
             if (data && typeof data === 'object') {
@@ -454,12 +439,10 @@
                 });
                 if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
             }
-
             if (Object.keys(playlists).length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-16 text-purple-400/50 text-xl">No rank data available</div>`;
                 return;
             }
-
             const tierOffsets = {
                 "unranked": 0,
                 "bronze": 1,
@@ -471,7 +454,6 @@
                 "grand champion": 19,
                 "supersonic legend": 22
             };
-
             Object.entries(playlists).forEach(([key, stats]) => {
                 const title = key
                     .replace(/([A-Z])/g, ' $1')
@@ -479,16 +461,13 @@
                     .replace('Duel', '1v1')
                     .replace('Doubles', '2v2')
                     .replace('Standard', '3v3');
-
                 let rankLower = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 let division = stats.division || stats.div || 1;
                 if (division > 4) division = 4;
                 if (division < 1) division = 1;
-
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
                 let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
-
                 let baseNum = tierOffsets.unranked;
                 for (let t in tierOffsets) {
                     if (rankLower.includes(t)) {
@@ -499,10 +478,8 @@
                 let imgNum = baseNum + (division - 1);
                 let icon = `https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-${imgNum}.png`;
                 const fallbackIcon = 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png';
-
                 const themeClass = getRankClass(rankLower);
                 const divText = division ? `Div ${division}` : '';
-
                 const card = `
                     <div class="rank-card ${themeClass} p-6 md:p-7">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
@@ -541,7 +518,6 @@
                 grid.innerHTML += card;
             });
         }
-
         function renderStats(stats) {
             const grid = document.getElementById('statsGrid');
             grid.innerHTML = '';
@@ -565,7 +541,6 @@
                 grid.innerHTML += card;
             });
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             const titleContainer = document.querySelector('.title-container');
             const titleText = document.querySelector('.title-text');
@@ -590,7 +565,6 @@
                 titleText.style.setProperty('--rotate-y', '0deg');
             });
         });
-
         document.getElementById('playerInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') searchPlayer();
         });
