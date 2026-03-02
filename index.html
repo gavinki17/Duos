@@ -52,8 +52,8 @@
             box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
         }
         .rank-icon {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.7));
             transition: transform 0.35s ease;
@@ -456,20 +456,28 @@
             };
 
             Object.entries(playlists).forEach(([key, stats]) => {
-                const title = key
+                const modeTitle = key
                     .replace(/([A-Z])/g, ' $1')
                     .replace(/^./, s => s.toUpperCase())
-                    .replace('Duel', '1v1')
-                    .replace('Doubles', '2v2')
-                    .replace('Standard', '3v3');
+                    .replace('Duel', '1v1 Duel')
+                    .replace('Doubles', '2v2 Doubles')
+                    .replace('Standard', '3v3 Standard')
+                    .replace('Hoops', 'Hoops')
+                    .replace('Rumble', 'Rumble')
+                    .replace('Dropshot', 'Dropshot')
+                    .replace('Snowday', 'Snow Day');
 
                 let rankLower = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 let division = stats.division || stats.div || 1;
                 if (division > 4) division = 4;
                 if (division < 1) division = 1;
 
+                let rankDisplay = rankLower.charAt(0).toUpperCase() + rankLower.slice(1);
+                if (division > 0 && !rankLower.includes('legend')) {
+                    rankDisplay += ` ${romanNumeral(division)}`;
+                }
+
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
-                let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
 
                 let baseNum = tierOffsets.unranked;
@@ -485,35 +493,28 @@
                 const fallbackIcon = 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png';
 
                 const themeClass = getRankClass(rankLower);
-                const divText = division ? `Div ${division}` : '';
+                const divText = ''; // no longer showing Div separately since it's in rank name
 
                 const card = `
                     <div class="rank-card ${themeClass} p-6 md:p-7">
-                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                        <div class="text-xs uppercase tracking-widest opacity-90 mb-2 text-center">${modeTitle}</div>
+                        <div class="text-2xl md:text-3xl font-black text-center mb-4">
+                            ${rankDisplay}
+                        </div>
+                        <div class="flex flex-col items-center gap-5">
                             <img
                                 src="${icon}"
                                 alt="${rankLower}"
                                 class="rank-icon flex-shrink-0"
                                 onerror="this.onerror=null; this.src='${fallbackIcon}';"
                             >
-                            <div class="flex-1 text-center sm:text-left min-w-0">
-                                <div class="text-xs uppercase tracking-widest opacity-90 mb-1">${title}</div>
-                                <div class="text-2xl md:text-3xl font-black whitespace-nowrap overflow-hidden text-ellipsis max-w-full leading-tight">
-                                    ${rankLower.charAt(0).toUpperCase() + rankLower.slice(1)}
-                                </div>
-                                ${divText ? `<div class="text-lg opacity-90 mt-1">${divText}</div>` : ''}
-                            </div>
-                            <div class="text-center sm:text-right mt-3 sm:mt-0 min-w-[100px]">
+                            <div class="text-center mt-2">
                                 <div class="text-4xl md:text-5xl font-mono font-black">${mmr}</div>
                                 <div class="text-xs opacity-70 tracking-wider">MMR</div>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-4 mt-6">
-                            <div class="bg-black/35 rounded-xl p-4 text-center">
-                                <div class="text-xs opacity-80 mb-1">GAMES</div>
-                                <div class="text-2xl font-mono">${games}</div>
-                            </div>
-                            <div class="bg-black/35 rounded-xl p-4 text-center">
+                        <div class="mt-6 text-center">
+                            <div class="bg-black/35 rounded-xl p-4 inline-block min-w-[140px]">
                                 <div class="text-xs opacity-80 mb-1">STREAK</div>
                                 <div class="text-2xl font-mono flex justify-center items-center gap-2">
                                     ${streak} ${streak > 0 ? '<span class="text-pink-300">🔥</span>' : ''}
@@ -524,6 +525,11 @@
                 `;
                 grid.innerHTML += card;
             });
+        }
+
+        function romanNumeral(n) {
+            const roman = ['', 'I', 'II', 'III', 'IV'];
+            return roman[n] || n;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
