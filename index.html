@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RLMath</title>
+    <title>RL Ranks</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
@@ -31,7 +31,6 @@
             z-index: -2;
             pointer-events: none;
         }
-        .glow-gone { text-shadow: none; }
         .main-card {
             background: rgba(18, 5, 25, 0.82);
             border: 1px solid rgba(216, 94, 254, 0.18);
@@ -194,17 +193,9 @@
             transform: translateX(0);
             opacity: 1;
         }
-        .toast.success {
-            border-color: #6ee7b7;
-            color: #d1fae5;
-        }
         .toast.error {
             border-color: #f87171;
             color: #fee2e2;
-        }
-        .toast.info {
-            border-color: #93c5fd;
-            color: #dbeafe;
         }
         .toast-icon {
             font-size: 1.4rem;
@@ -214,15 +205,16 @@
 </head>
 <body class="flex flex-col">
     <div id="particles-js"></div>
+
     <div id="searchPage" class="flex-1 flex flex-col items-center justify-center px-4 py-8 relative z-10">
         <div class="text-center mb-10 pulse-glow">
             <div class="title-container">
                 <h1 class="title-text text-6xl md:text-7xl font-black tracking-tighter">
-                    Aerial Analytics
+                    RL Ranks
                 </h1>
             </div>
             <p class="mt-2 text-base md:text-lg text-purple-300/80 font-light">
-                Rocket League stats delivered fast and clean.
+                Rocket League ranks — fast and clean.
             </p>
         </div>
         <div class="w-full max-w-lg main-card p-6 md:p-8 shadow-lg">
@@ -237,13 +229,14 @@
                 class="mt-6 w-full purple-red-btn py-5 rounded-2xl text-lg font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg"
             >
                 <i class="fa-solid fa-rocket"></i>
-                LOAD PROFILE
+                LOAD RANKS
             </button>
         </div>
         <div class="mt-8 text-xs md:text-sm text-purple-400/60 text-center">
             Use a 32-character Epic Account ID.
         </div>
     </div>
+
     <div id="playerPage" class="hidden relative z-10">
         <div class="max-w-5xl mx-auto px-5 pt-8 pb-12">
             <button
@@ -258,10 +251,6 @@
                 Current Ranks
             </h2>
             <div id="ranksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
-            <h2 class="text-3xl md:text-4xl font-black mt-14 mb-6 text-center md:text-left bg-gradient-to-r from-purple-400 to-fuchsia-500 bg-clip-text text-transparent">
-                Career Stats (All-Time)
-            </h2>
-            <div id="statsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             <details class="mt-14 main-card p-7 text-sm">
                 <summary class="cursor-pointer flex items-center gap-3 text-purple-300 font-medium text-base">
                     <i class="fa-solid fa-code"></i>
@@ -271,12 +260,14 @@
             </details>
         </div>
     </div>
+
     <div id="loading" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
         <div class="text-center">
             <div class="w-16 h-16 border-6 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-5"></div>
-            <p class="text-xl font-bold text-purple-400">Loading stats...</p>
+            <p class="text-xl font-bold text-purple-400">Loading ranks...</p>
         </div>
     </div>
+
     <div id="errorModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 px-4">
         <div class="main-card max-w-md w-full p-8 text-center">
             <i class="fa-solid fa-triangle-exclamation text-5xl text-fuchsia-500 mb-5"></i>
@@ -286,96 +277,28 @@
             </button>
         </div>
     </div>
+
     <div id="toastContainer"></div>
+
     <script>
         particlesJS("particles-js", {
             "particles": {
-                "number": {
-                    "value": 60,
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": "#888888"
-                },
-                "shape": {
-                    "type": "circle",
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    }
-                },
-                "opacity": {
-                    "value": 0.35,
-                    "random": true,
-                    "anim": {
-                        "enable": true,
-                        "speed": 1,
-                        "opacity_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "size": {
-                    "value": 3,
-                    "random": true,
-                    "anim": {
-                        "enable": false,
-                        "speed": 40,
-                        "size_min": 0.1,
-                        "sync": false
-                    }
-                },
-                "line_linked": {
-                    "enable": false
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 0.8,
-                    "direction": "none",
-                    "random": true,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                        "enable": false,
-                        "rotateX": 600,
-                        "rotateY": 1200
-                    }
-                }
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#888888" },
+                "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" } },
+                "opacity": { "value": 0.35, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } },
+                "size": { "value": 3, "random": true, "anim": { "enable": false, "speed": 40, "size_min": 0.1, "sync": false } },
+                "line_linked": { "enable": false },
+                "move": { "enable": true, "speed": 0.8, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 } }
             },
             "interactivity": {
                 "detect_on": "canvas",
-                "events": {
-                    "onhover": {
-                        "enable": false
-                    },
-                    "onclick": {
-                        "enable": false
-                    },
-                    "resize": true
-                }
+                "events": { "onhover": { "enable": false }, "onclick": { "enable": false }, "resize": true }
             },
             "retina_detect": true
         });
 
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
-
-        // Simple cache helper
-        function getCache(id) {
-            try {
-                const cached = localStorage.getItem(`rlcache_${id}`);
-                if (cached) return JSON.parse(cached);
-            } catch {}
-            return null;
-        }
-
-        function setCache(id, data, stats) {
-            try {
-                localStorage.setItem(`rlcache_${id}`, JSON.stringify({ data, stats, timestamp: Date.now() }));
-            } catch {}
-        }
 
         function showSearchPage() {
             document.getElementById('playerPage').classList.add('hidden');
@@ -402,17 +325,11 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type} flex`;
-            let icon = 'fa-circle-exclamation';
-            let prefix = '';
+            let icon = 'fa-triangle-exclamation';
+            let prefix = 'Error: ';
             if (type === 'success') {
                 icon = 'fa-circle-check';
                 prefix = 'Success: ';
-            } else if (type === 'info') {
-                icon = 'fa-circle-info';
-                prefix = 'Info: ';
-            } else {
-                icon = 'fa-triangle-exclamation';
-                prefix = 'Error: ';
             }
             toast.innerHTML = `
                 <i class="fa-solid ${icon} toast-icon"></i>
@@ -426,25 +343,6 @@
             }, 5000);
         }
 
-        async function fetchPlayerName(id) {
-            const url = `https://rocket-league1.p.rapidapi.com/profile/${id}`;
-            try {
-                const res = await fetch(url, {
-                    headers: {
-                        'X-RapidAPI-Key': API_KEY,
-                        'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com',
-                        'Accept-Encoding': 'identity',
-                        'x-rapidapi-ua': 'RapidAPI-Playground'
-                    }
-                });
-                if (!res.ok) return null;
-                const data = await res.json();
-                return data.name || data.displayName || data.username || data.playerName || null;
-            } catch {
-                return null;
-            }
-        }
-
         async function searchPlayer() {
             let id = document.getElementById('playerInput').value.trim().replace(/\s/g, '');
             if (!id) {
@@ -456,21 +354,9 @@
                 return;
             }
 
-            // Check cache first (valid for ~1 day)
-            const cached = getCache(id);
-            if (cached && (Date.now() - cached.timestamp < 86400000)) {
-                showNotification("Loaded from cache!", "success");
-                renderProfile(cached.data, id, cached.data.name || "Player");
-                renderStats(cached.stats);
-                showPlayerPage();
-                return;
-            }
-
             showLoading();
 
             try {
-                let playerName = await fetchPlayerName(id);
-
                 const ranksUrl = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
                 const ranksRes = await fetch(ranksUrl, {
                     headers: {
@@ -483,7 +369,7 @@
 
                 if (!ranksRes.ok) {
                     if (ranksRes.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
-                    else if (ranksRes.status === 429) showNotification("Rate limit reached.<br>Free tier is only ~5 requests/day.<br>Wait 24h or upgrade plan.", "error");
+                    else if (ranksRes.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
                     else showNotification(`Error ${ranksRes.status}`, "error");
                     hideLoading();
                     return;
@@ -492,41 +378,9 @@
                 const data = await ranksRes.json();
                 window.currentData = data;
 
-                if (!playerName) {
-                    playerName = data.name || data.displayName || data.username || "Player";
-                }
+                const playerName = data.name || data.displayName || data.username || "Player";
 
                 renderProfile(data, id, playerName);
-
-                const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
-                const statsData = {};
-
-                await Promise.all(statsToFetch.map(async stat => {
-                    try {
-                        const statRes = await fetch(`https://rocket-league1.p.rapidapi.com/stat/${id}/${stat}`, {
-                            headers: {
-                                'X-RapidAPI-Key': API_KEY,
-                                'X-RapidAPI-Host': 'rocket-league1.p.rapidapi.com',
-                                'Accept-Encoding': 'identity',
-                                'x-rapidapi-ua': 'RapidAPI-Playground'
-                            }
-                        });
-                        if (statRes.ok) {
-                            const json = await statRes.json();
-                            statsData[stat] = json.value !== undefined ? json.value : json;
-                        } else {
-                            statsData[stat] = '—';
-                        }
-                    } catch {
-                        statsData[stat] = '—';
-                    }
-                }));
-
-                renderStats(statsData);
-
-                // Cache the results
-                setCache(id, data, statsData);
-
                 showPlayerPage();
             } catch (err) {
                 showNotification("Failed to connect.<br>Try again later.", "error");
@@ -572,6 +426,7 @@
             `;
 
             grid.innerHTML = '';
+
             let playlists = {};
             if (data && typeof data === 'object') {
                 Object.keys(data).forEach(k => {
@@ -624,6 +479,7 @@
                         break;
                     }
                 }
+
                 let imgNum = baseNum + (division - 1);
                 let icon = `https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-${imgNum}.png`;
                 const fallbackIcon = 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png';
@@ -664,31 +520,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                grid.innerHTML += card;
-            });
-        }
-
-        function renderStats(stats) {
-            const grid = document.getElementById('statsGrid');
-            grid.innerHTML = '';
-            const statDisplay = [
-                { key: 'goals', label: 'Goals', icon: 'fa-futbol' },
-                { key: 'assists', label: 'Assists', icon: 'fa-handshake' },
-                { key: 'saves', label: 'Saves', icon: 'fa-shield-alt' },
-                { key: 'shots', label: 'Shots', icon: 'fa-bullseye' },
-                { key: 'mvps', label: 'MVPs', icon: 'fa-trophy' },
-                { key: 'wins', label: 'Wins', icon: 'fa-check-circle' }
-            ];
-
-            statDisplay.forEach(item => {
-                const value = stats[item.key] !== undefined && stats[item.key] !== null ? stats[item.key] : '—';
-                const card = `
-                    <div class="main-card p-6 text-center transform hover:scale-105 transition-all">
-                        <i class="fa-solid ${item.icon} text-5xl text-fuchsia-400 mb-3"></i>
-                        <div class="text-3xl md:text-4xl font-black text-white">${value}</div>
-                        <div class="text-lg md:text-xl text-purple-300 mt-1">${item.label}</div>
                     </div>
                 `;
                 grid.innerHTML += card;
