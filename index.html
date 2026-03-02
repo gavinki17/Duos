@@ -213,9 +213,7 @@
     </style>
 </head>
 <body class="flex flex-col">
-
     <div id="particles-js"></div>
-
     <div id="searchPage" class="flex-1 flex flex-col items-center justify-center px-4 py-8 relative z-10">
         <div class="text-center mb-10 pulse-glow">
             <div class="title-container">
@@ -246,7 +244,6 @@
             Use a 32-character Epic Account ID.
         </div>
     </div>
-
     <div id="playerPage" class="hidden relative z-10">
         <div class="max-w-5xl mx-auto px-5 pt-8 pb-12">
             <button
@@ -274,14 +271,12 @@
             </details>
         </div>
     </div>
-
     <div id="loading" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
         <div class="text-center">
             <div class="w-16 h-16 border-6 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-5"></div>
             <p class="text-xl font-bold text-purple-400">Loading stats...</p>
         </div>
     </div>
-
     <div id="errorModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 px-4">
         <div class="main-card max-w-md w-full p-8 text-center">
             <i class="fa-solid fa-triangle-exclamation text-5xl text-fuchsia-500 mb-5"></i>
@@ -291,9 +286,7 @@
             </button>
         </div>
     </div>
-
     <div id="toastContainer"></div>
-
     <script>
         particlesJS("particles-js", {
             "particles": {
@@ -368,6 +361,21 @@
         });
 
         const API_KEY = "33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
+
+        // Simple cache helper
+        function getCache(id) {
+            try {
+                const cached = localStorage.getItem(`rlcache_${id}`);
+                if (cached) return JSON.parse(cached);
+            } catch {}
+            return null;
+        }
+
+        function setCache(id, data, stats) {
+            try {
+                localStorage.setItem(`rlcache_${id}`, JSON.stringify({ data, stats, timestamp: Date.now() }));
+            } catch {}
+        }
 
         function showSearchPage() {
             document.getElementById('playerPage').classList.add('hidden');
@@ -447,9 +455,22 @@
                 showNotification("Invalid format.<br>Must be exactly 32 hexadecimal characters.", "error");
                 return;
             }
+
+            // Check cache first (valid for ~1 day)
+            const cached = getCache(id);
+            if (cached && (Date.now() - cached.timestamp < 86400000)) {
+                showNotification("Loaded from cache!", "success");
+                renderProfile(cached.data, id, cached.data.name || "Player");
+                renderStats(cached.stats);
+                showPlayerPage();
+                return;
+            }
+
             showLoading();
+
             try {
                 let playerName = await fetchPlayerName(id);
+
                 const ranksUrl = `https://rocket-league1.p.rapidapi.com/ranks/${id}`;
                 const ranksRes = await fetch(ranksUrl, {
                     headers: {
@@ -459,21 +480,27 @@
                         'x-rapidapi-ua': 'RapidAPI-Playground'
                     }
                 });
+
                 if (!ranksRes.ok) {
                     if (ranksRes.status === 404) showNotification("Player not found.<br>Check the Epic ID.", "error");
-                    else if (ranksRes.status === 429) showNotification("Rate limit reached.<br>Try again later.", "error");
+                    else if (ranksRes.status === 429) showNotification("Rate limit reached.<br>Free tier is only ~5 requests/day.<br>Wait 24h or upgrade plan.", "error");
                     else showNotification(`Error ${ranksRes.status}`, "error");
                     hideLoading();
                     return;
                 }
+
                 const data = await ranksRes.json();
                 window.currentData = data;
+
                 if (!playerName) {
                     playerName = data.name || data.displayName || data.username || "Player";
                 }
+
                 renderProfile(data, id, playerName);
+
                 const statsToFetch = ['assists', 'goals', 'mvps', 'saves', 'shots', 'wins'];
                 const statsData = {};
+
                 await Promise.all(statsToFetch.map(async stat => {
                     try {
                         const statRes = await fetch(`https://rocket-league1.p.rapidapi.com/stat/${id}/${stat}`, {
@@ -494,7 +521,12 @@
                         statsData[stat] = '—';
                     }
                 }));
+
                 renderStats(statsData);
+
+                // Cache the results
+                setCache(id, data, statsData);
+
                 showPlayerPage();
             } catch (err) {
                 showNotification("Failed to connect.<br>Try again later.", "error");
@@ -521,7 +553,9 @@
             const grid = document.getElementById('ranksGrid');
             const raw = document.getElementById('rawJson');
             raw.textContent = JSON.stringify(data, null, 2);
+
             let name = forcedName || data.name || data.displayName || data.username || "Player";
+
             header.innerHTML = `
                 <div class="w-28 h-28 bg-gradient-to-br from-purple-700 to-fuchsia-800 rounded-2xl flex items-center justify-center text-6xl shadow-xl flex-shrink-0">
                     🚀
@@ -536,6 +570,7 @@
                     </div>
                 </div>
             `;
+
             grid.innerHTML = '';
             let playlists = {};
             if (data && typeof data === 'object') {
@@ -547,10 +582,12 @@
                 });
                 if (Object.keys(playlists).length === 0 && data.ranks) playlists = data.ranks;
             }
+
             if (Object.keys(playlists).length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-16 text-purple-400/50 text-xl">No rank data available</div>`;
                 return;
             }
+
             const tierOffsets = {
                 "unranked": 0,
                 "bronze": 1,
@@ -562,6 +599,7 @@
                 "grand champion": 19,
                 "supersonic legend": 22
             };
+
             Object.entries(playlists).forEach(([key, stats]) => {
                 const title = key
                     .replace(/([A-Z])/g, ' $1')
@@ -569,13 +607,16 @@
                     .replace('Duel', '1v1')
                     .replace('Doubles', '2v2')
                     .replace('Standard', '3v3');
+
                 let rankLower = (stats.rank || stats.tier_name || stats.tier || 'Unranked').toLowerCase();
                 let division = stats.division || stats.div || 1;
                 if (division > 4) division = 4;
                 if (division < 1) division = 1;
+
                 let mmr = stats.mmr || stats.skill || stats.rating || '—';
                 let games = stats.matchesPlayed || stats.games || '—';
                 let streak = stats.winStreak || stats.streak || '—';
+
                 let baseNum = tierOffsets.unranked;
                 for (let t in tierOffsets) {
                     if (rankLower.includes(t)) {
@@ -586,8 +627,10 @@
                 let imgNum = baseNum + (division - 1);
                 let icon = `https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-${imgNum}.png`;
                 const fallbackIcon = 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png';
+
                 const themeClass = getRankClass(rankLower);
                 const divText = division ? `Div ${division}` : '';
+
                 const card = `
                     <div class="rank-card ${themeClass} p-6 md:p-7">
                         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
@@ -638,6 +681,7 @@
                 { key: 'mvps', label: 'MVPs', icon: 'fa-trophy' },
                 { key: 'wins', label: 'Wins', icon: 'fa-check-circle' }
             ];
+
             statDisplay.forEach(item => {
                 const value = stats[item.key] !== undefined && stats[item.key] !== null ? stats[item.key] : '—';
                 const card = `
@@ -655,6 +699,7 @@
             const titleContainer = document.querySelector('.title-container');
             const titleText = document.querySelector('.title-text');
             if (!titleContainer || !titleText) return;
+
             titleContainer.addEventListener('mousemove', (e) => {
                 const rect = titleContainer.getBoundingClientRect();
                 const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
@@ -668,6 +713,7 @@
                 titleText.style.setProperty('--rotate-x', rotateX);
                 titleText.style.setProperty('--rotate-y', rotateY);
             });
+
             titleContainer.addEventListener('mouseleave', () => {
                 titleText.style.setProperty('--skew-x', '0deg');
                 titleText.style.setProperty('--skew-y', '0deg');
