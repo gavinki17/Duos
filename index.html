@@ -144,96 +144,57 @@
         </div>
     </div>
 
-    <script>
-        // === YOUR REAL CREDENTIALS (already filled) ===
-        const CLIENT_ID = "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP";
-        const REDIRECT_URI = "https://www.rlstats.goit.au";
-        const DEPLOYMENT_ID = "d59d6baab8394c008f70c8f80abc3a6f";
+<script>
+    // === YOUR REAL CREDENTIALS ===
+    const CLIENT_ID = "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP";
+    const REDIRECT_URI = "https://www.rlstats.goit.au";   // ← MUST match portal exactly
+    const DEPLOYMENT_ID = "1f6dc4c77a774daea9a9c414972de7d6";
+    
+    const AUTH_URL = "https://www.epicgames.com/id/authorize";
+    
+    function showStatus(message, type = "error") {
+        const statusEl = document.getElementById("status");
+        statusEl.textContent = message;
+        statusEl.className = `status ${type}`;
+        statusEl.style.display = "block";
+        setTimeout(() => statusEl.style.display = "none", 10000);
+    }
+    
+    function startOAuthFlow() {
+        const state = btoa(Math.random().toString()).slice(0, 32);
+        sessionStorage.setItem("oauth_state", state);
         
-        const AUTH_URL = "https://www.epicgames.com/id/authorize";
+        const params = new URLSearchParams({
+            client_id: CLIENT_ID,
+            response_type: "code",
+            scope: "basic_profile friends_list",
+            redirect_uri: REDIRECT_URI,        // ← exact match
+            state: state
+        });
         
-        function showStatus(message, type = "error") {
-            const statusEl = document.getElementById("status");
-            statusEl.textContent = message;
-            statusEl.className = `status ${type}`;
-            statusEl.style.display = "block";
-            setTimeout(() => statusEl.style.display = "none", 8000);
-        }
+        window.location.href = `${AUTH_URL}?${params.toString()}`;
+    }
+    
+    // === The rest of your script stays the same (direct login + onload check) ===
+    // (I kept it short here — just replace the top part)
+    
+    window.onload = () => {
+        const params = new URLSearchParams(location.search);
+        const code = params.get("code");
+        const state = params.get("state");
+        const error = params.get("error");
         
-        // === RECOMMENDED & SECURE WAY ===
-        function startOAuthFlow() {
-            const state = btoa(Math.random().toString()).slice(0, 32);
-            sessionStorage.setItem("oauth_state", state);
-            
-            const params = new URLSearchParams({
-                client_id: CLIENT_ID,
-                response_type: "code",
-                scope: "basic_profile friends_list",
-                redirect_uri: REDIRECT_URI,
-                state: state
-            });
-            
-            window.location.href = `${AUTH_URL}?${params.toString()}`;
-        }
-        
-        // === DIRECT PASSWORD (only for testing dev accounts) ===
-        async function attemptDirectLogin() {
-            const username = document.getElementById("username").value.trim();
-            const password = document.getElementById("password").value;
-            
-            if (!username || !password) return showStatus("Enter username and password", "error");
-            
-            showStatus("Trying direct login...", "error");
-            
-            const formData = new URLSearchParams();
-            formData.append("grant_type", "password");
-            formData.append("username", username);
-            formData.append("password", password);
-            formData.append("scope", "basic_profile");
-            formData.append("deployment_id", DEPLOYMENT_ID);
-            
-            try {
-                const res = await fetch("https://api.epicgames.dev/epic/oauth/v2/token", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "Authorization": "Basic " + btoa(CLIENT_ID + ":")
-                    },
-                    body: formData
-                });
-                
-                const data = await res.json();
-                
-                if (res.ok && data.access_token) {
-                    showStatus(`✅ Logged in! Account ID: ${data.account_id || 'unknown'}`, "success");
-                    console.log("Epic Token:", data.access_token);
-                } else {
-                    showStatus(data.error_description || "Login failed (2FA or not a dev account)", "error");
-                }
-            } catch (e) {
-                showStatus("Network error: " + e.message, "error");
+        if (error) {
+            showStatus("Epic Error: " + error, "error");
+        } else if (code) {
+            if (state === sessionStorage.getItem("oauth_state")) {
+                showStatus("✅ SUCCESS! Authorization code received.\n\nYou are now back on your site.\n\nNext step: send this code to your backend to get the access token.", "success");
+                console.log("%c🔑 Authorization Code:", "color:#0E9FFF", code);
+            } else {
+                showStatus("State mismatch error", "error");
             }
         }
-        
-        // Check if Epic redirected back to us
-        window.onload = () => {
-            const params = new URLSearchParams(location.search);
-            const code = params.get("code");
-            const state = params.get("state");
-            const error = params.get("error");
-            
-            if (error) showStatus("Epic error: " + error, "error");
-            else if (code) {
-                if (state === sessionStorage.getItem("oauth_state")) {
-                    showStatus("✅ Authorization code received!\n\nIn production, send this code to your backend to get the access token.", "success");
-                    console.log("🔑 Authorization Code:", code);
-                } else {
-                    showStatus("State mismatch!", "error");
-                }
-            }
-        };
-        
-        console.log("%c✅ RLStats Epic Login ready with your real credentials!", "color:#0E9FFF; font-size:16px");
-    </script>
+    };
+</script>
 </body>
 </html>
