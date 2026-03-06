@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epic Games Login Demo</title>
+    <title>RLStats - Sign in with Epic Games</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         
-        :root {
-            --epic-blue: #0E9FFF;
-        }
+        :root { --epic-blue: #0E9FFF; }
         
         body {
             margin: 0;
@@ -28,7 +26,7 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 24px;
-            width: 420px;
+            width: 440px;
             padding: 40px 36px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
         }
@@ -41,37 +39,13 @@
             margin-bottom: 32px;
         }
         
-        .logo svg {
-            width: 48px;
-            height: 48px;
-        }
+        h1 { text-align: center; font-size: 28px; font-weight: 600; margin: 0; }
         
-        h1 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-            letter-spacing: -0.5px;
-        }
+        p.subtitle { text-align: center; color: #aaa; margin-bottom: 40px; font-size: 15px; }
         
-        p.subtitle {
-            text-align: center;
-            color: #aaa;
-            margin-bottom: 40px;
-            font-size: 15px;
-        }
+        .form-group { margin-bottom: 20px; }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 6px;
-            color: #ccc;
-        }
+        label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #ccc; }
         
         input {
             width: 100%;
@@ -81,14 +55,9 @@
             border-radius: 12px;
             color: white;
             font-size: 16px;
-            transition: all 0.2s;
         }
         
-        input:focus {
-            outline: none;
-            border-color: var(--epic-blue);
-            box-shadow: 0 0 0 3px rgba(14, 159, 255, 0.2);
-        }
+        input:focus { outline: none; border-color: var(--epic-blue); box-shadow: 0 0 0 3px rgba(14, 159, 255, 0.2); }
         
         .login-btn {
             width: 100%;
@@ -100,37 +69,14 @@
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
             margin-top: 10px;
         }
         
-        .login-btn:hover {
-            background: #0b8be6;
-            transform: translateY(-1px);
-        }
+        .login-btn:hover { background: #0b8be6; }
         
-        .divider {
-            margin: 30px 0;
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            position: relative;
-        }
-        
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: rgba(255,255,255,0.1);
-        }
-        
-        .divider span {
-            background: rgba(255,255,255,0.08);
-            padding: 0 20px;
-        }
+        .divider { margin: 30px 0; text-align: center; color: #666; font-size: 14px; position: relative; }
+        .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); }
+        .divider span { background: rgba(255,255,255,0.08); padding: 0 20px; }
         
         .epic-btn {
             display: flex;
@@ -146,117 +92,77 @@
             font-weight: 500;
             font-size: 16px;
             cursor: pointer;
-            transition: all 0.2s;
         }
         
-        .epic-btn:hover {
-            background: rgba(255,255,255,0.12);
-        }
+        .epic-btn:hover { background: rgba(255,255,255,0.12); }
         
-        .status {
-            margin-top: 24px;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            text-align: center;
-            display: none;
-        }
-        
+        .status { margin-top: 24px; padding: 12px; border-radius: 12px; font-size: 14px; text-align: center; display: none; }
         .success { background: rgba(0, 255, 100, 0.15); color: #0f0; }
         .error { background: rgba(255, 80, 80, 0.15); color: #ff5555; }
         
-        .footer {
-            text-align: center;
-            margin-top: 32px;
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .epic-icon {
-            width: 24px;
-            height: 24px;
-        }
+        .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #666; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">
-            <!-- Epic Games logo (SVG) -->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="white">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="white" width="48" height="48">
                 <path d="M100 20 L180 60 L180 140 L100 180 L20 140 L20 60 Z" fill="#0E9FFF"/>
                 <path d="M100 40 L160 70 L160 130 L100 160 L40 130 L40 70 Z" fill="#fff"/>
             </svg>
-            <h1>Epic Login Demo</h1>
+            <h1>Sign in with Epic</h1>
         </div>
         
-        <p class="subtitle">Sign in with your Epic Games account</p>
+        <p class="subtitle">RLStats Login • Powered by Epic Games</p>
         
-        <!-- Direct form (for demo only - NOT recommended in production) -->
+        <button onclick="startOAuthFlow()" class="epic-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4V7m-4 4V7" />
+            </svg>
+            Continue with Epic Games
+        </button>
+        
+        <div class="divider"><span>or (dev only)</span></div>
+        
         <div id="direct-form">
             <div class="form-group">
                 <label for="username">Email or Username</label>
-                <input type="text" id="username" placeholder="your@email.com" autocomplete="username">
+                <input type="text" id="username" placeholder="your@email.com">
             </div>
-            
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+                <input type="password" id="password" placeholder="••••••••">
             </div>
-            
-            <button onclick="attemptDirectLogin()" class="login-btn">Sign in with Epic</button>
-            
-            <div class="divider"><span>or</span></div>
+            <button onclick="attemptDirectLogin()" class="login-btn">Sign in directly (dev only)</button>
         </div>
-        
-        <!-- Recommended OAuth button -->
-        <button onclick="startOAuthFlow()" class="epic-btn">
-            <svg class="epic-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4V7m-4 4V7" />
-            </svg>
-            Continue with Epic Games (Recommended)
-        </button>
         
         <div id="status" class="status"></div>
         
         <div class="footer">
-            This is a demo page.<br>
-            <strong>⚠️ Direct username/password login is only for development and organization accounts.</strong><br>
-            Most real websites must use the OAuth redirect flow.
+            Your Client ID and Redirect URI are already configured.<br>
+            <strong>Only use the blue button on your real website.</strong>
         </div>
     </div>
 
     <script>
-        // === CONFIGURATION ===
-        // You MUST replace these with your own values from https://dev.epicgames.com/portal
-        const CLIENT_ID = "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP";           // ← Change this
-        const REDIRECT_URI = "https://www.rlstats.goit.au"; // Must match what you registered in Epic Portal
-        const DEPLOYMENT_ID = "1f6dc4c77a774daea9a9c414972de7d6";   // Optional but recommended for full access
+        // === YOUR REAL CREDENTIALS (already filled) ===
+        const CLIENT_ID = "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP";
+        const REDIRECT_URI = "https://www.rlstats.goit.au";
+        const DEPLOYMENT_ID = "1f6dc4c77a774daea9a9c414972de7d6";
         
-        // Authorization URL (official)
         const AUTH_URL = "https://www.epicgames.com/id/authorize";
-        
-        // Token endpoint
-        const TOKEN_URL = "https://api.epicgames.dev/epic/oauth/v2/token";
         
         function showStatus(message, type = "error") {
             const statusEl = document.getElementById("status");
             statusEl.textContent = message;
             statusEl.className = `status ${type}`;
             statusEl.style.display = "block";
-            
-            setTimeout(() => {
-                statusEl.style.display = "none";
-            }, 8000);
+            setTimeout(() => statusEl.style.display = "none", 8000);
         }
         
-        // === RECOMMENDED WAY: OAuth 2.0 Authorization Code Flow ===
+        // === RECOMMENDED & SECURE WAY ===
         function startOAuthFlow() {
-            if (CLIENT_ID === "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP") {
-                alert("Please replace CLIENT_ID and REDIRECT_URI with your real Epic developer credentials!");
-                return;
-            }
-            
-            const state = btoa(Math.random().toString()).slice(0, 32); // CSRF protection
+            const state = btoa(Math.random().toString()).slice(0, 32);
             sessionStorage.setItem("oauth_state", state);
             
             const params = new URLSearchParams({
@@ -270,80 +176,64 @@
             window.location.href = `${AUTH_URL}?${params.toString()}`;
         }
         
-        // === DIRECT PASSWORD GRANT (DEVELOPMENT ONLY - WILL FAIL FOR 99% OF ACCOUNTS) ===
+        // === DIRECT PASSWORD (only for testing dev accounts) ===
         async function attemptDirectLogin() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
             
-            if (!username || !password) {
-                showStatus("Please enter email/username and password", "error");
-                return;
-            }
+            if (!username || !password) return showStatus("Enter username and password", "error");
             
-            if (CLIENT_ID === "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP") {
-                showStatus("Replace CLIENT_ID first!", "error");
-                return;
-            }
-            
-            showStatus("Attempting login (development mode only)...", "error");
+            showStatus("Trying direct login...", "error");
             
             const formData = new URLSearchParams();
             formData.append("grant_type", "password");
             formData.append("username", username);
             formData.append("password", password);
             formData.append("scope", "basic_profile");
-            if (DEPLOYMENT_ID !== "YOUR_DEPLOYMENT_ID_HERE") {
-                formData.append("deployment_id", DEPLOYMENT_ID);
-            }
+            formData.append("deployment_id", DEPLOYMENT_ID);
             
             try {
-                const response = await fetch(TOKEN_URL, {
+                const res = await fetch("https://api.epicgames.dev/epic/oauth/v2/token", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
-                        "Authorization": "Basic " + btoa(CLIENT_ID + ":") // client_secret can be empty for some clients
+                        "Authorization": "Basic " + btoa(CLIENT_ID + ":")
                     },
                     body: formData
                 });
                 
-                const data = await response.json();
+                const data = await res.json();
                 
-                if (response.ok && data.access_token) {
-                    showStatus(`✅ Login successful! Account ID: ${data.account_id || "unknown"}`, "success");
-                    console.log("Epic Access Token:", data.access_token);
-                    console.log("Full response:", data);
-                    
-                    // You can now use the token to call Epic APIs
+                if (res.ok && data.access_token) {
+                    showStatus(`✅ Logged in! Account ID: ${data.account_id || 'unknown'}`, "success");
+                    console.log("Epic Token:", data.access_token);
                 } else {
-                    showStatus(data.error_description || data.error || "Login failed (most likely 2FA enabled or not an org account)", "error");
+                    showStatus(data.error_description || "Login failed (2FA or not a dev account)", "error");
                 }
-            } catch (err) {
-                showStatus("Network error - " + err.message, "error");
+            } catch (e) {
+                showStatus("Network error: " + e.message, "error");
             }
         }
         
-        // Auto-check for callback (in a real app you would have a separate /callback page)
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get("code");
-            const state = urlParams.get("state");
-            const error = urlParams.get("error");
+        // Check if Epic redirected back to us
+        window.onload = () => {
+            const params = new URLSearchParams(location.search);
+            const code = params.get("code");
+            const state = params.get("state");
+            const error = params.get("error");
             
-            if (error) {
-                showStatus("Epic returned error: " + error, "error");
-            } else if (code && state) {
+            if (error) showStatus("Epic error: " + error, "error");
+            else if (code) {
                 if (state === sessionStorage.getItem("oauth_state")) {
-                    showStatus("✅ Authorization code received! In a real app, exchange it for a token on your backend now.", "success");
-                    console.log("Authorization Code:", code);
-                    // In production: send code to your server to exchange for access_token
+                    showStatus("✅ Authorization code received!\n\nIn production, send this code to your backend to get the access token.", "success");
+                    console.log("🔑 Authorization Code:", code);
                 } else {
-                    showStatus("State mismatch - possible CSRF attack", "error");
+                    showStatus("State mismatch!", "error");
                 }
             }
         };
         
-        // Demo tip
-        console.log("%c🚀 Epic Games Login Demo Ready!\n\n1. Get your Client ID at https://dev.epicgames.com/portal\n2. Replace CLIENT_ID and REDIRECT_URI\n3. For real websites → always use the blue 'Continue with Epic Games' button (OAuth flow)\n4. Direct password login only works for dev/org accounts without 2FA", "color:#0E9FFF; font-family:monospace");
+        console.log("%c✅ RLStats Epic Login ready with your real credentials!", "color:#0E9FFF; font-size:16px");
     </script>
 </body>
 </html>
