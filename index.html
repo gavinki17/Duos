@@ -3,181 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aerial Analytics</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <title>Epic Games Login Demo</title>
     <style>
-        *{user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}
-        body{background:linear-gradient(135deg,#0f000a,#080013);color:#f3e8ff;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;overflow-x:hidden;position:relative}
-        #particles-js{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none}
-        .main-card{background:rgba(18,5,25,.82);border:1px solid rgba(216,94,254,.18);border-radius:1.25rem;backdrop-filter:blur(12px);position:relative;z-index:1}
-        .rank-card{border-radius:1.25rem;overflow:hidden;transition:all .4s cubic-bezier(.34,1,.3,1);border:1px solid transparent;position:relative;z-index:1}
-        .rank-card:hover{transform:translateY(-8px) scale(1.015);box-shadow:0 20px 40px -10px rgba(0,0,0,.6)}
-        .rank-icon{width:80px;height:80px;object-fit:contain;filter:drop-shadow(0 5px 10px rgba(0,0,0,.7));transition:transform .35s ease}
-        .rank-card:hover .rank-icon{transform:scale(1.12)}
-        .input-focus{transition:all .35s ease}
-        .input-focus:focus{border-color:#c084fc;box-shadow:0 0 0 3px rgba(192,132,252,.2);transform:scale(1.01);background:rgba(0,0,0,.6)!important}
-        .pulse-glow{animation:pulse 5s infinite ease-in-out}
-        @keyframes pulse{0%,100%{opacity:.94}50%{opacity:1}}
-        .rank-bronze{background:linear-gradient(135deg,#2c0f14,#4a1a22);border-color:#9f1239}
-        .rank-silver{background:linear-gradient(135deg,#2a1a2e,#4a2c52);border-color:#a78bfa}
-        .rank-gold{background:linear-gradient(135deg,#3b1f0f,#6b3a1f);border-color:#fbbf24}
-        .rank-platinum{background:linear-gradient(135deg,#2a1f3b,#4a3b5e);border-color:#c4b5fd}
-        .rank-diamond{background:linear-gradient(135deg,#3b1a4a,#7c3aed);border-color:#a78bfa}
-        .rank-champion{background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#c084fc}
-        .rank-grand{background:linear-gradient(135deg,#3b0764,#7e22ce);border-color:#a855f7}
-        .rank-legend{background:linear-gradient(135deg,#2e0a4a,#6d28d9);border-color:#c084fc;box-shadow:0 0 32px rgba(168,85,247,.18)}
-        .rank-default{background:linear-gradient(135deg,#0f001a,#1a0033);border-color:#6b21a8}
-        .purple-red-btn{position:relative;background:linear-gradient(270deg,#7c3aed,#c084fc,#ec4899,#a855f7,#7c3aed);background-size:300% 300%;animation:gradientFlow 8s ease infinite;border:none;overflow:hidden;z-index:1}
-        .purple-red-btn::before{content:'';position:absolute;inset:-2px;background:linear-gradient(270deg,#4c1d95,#7c3aed,#a855f7,#7c3aed,#4c1d95);background-size:300% 300%;animation:gradientFlow 8s ease infinite;z-index:-2;border-radius:1rem;filter:brightness(.6) saturate(.85);opacity:.9}
-        .purple-red-btn::after{content:'';position:absolute;inset:0;background:rgba(18,5,25,.82);border-radius:.875rem;z-index:-1}
-        .purple-red-btn:hover{filter:brightness(1.1)}
-        @keyframes gradientFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        .title-container{position:relative;display:inline-block;perspective:1000px;padding-bottom:2rem;overflow:visible!important;z-index:1}
-        .title-text{display:block;transition:transform .25s cubic-bezier(.16,1,.3,1);transform-origin:center bottom;will-change:transform;background:linear-gradient(90deg,#a78bfa,#c084fc,#f472b6,#ec4899,#c084fc,#a78bfa);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:gradientFlowTitle 7s ease infinite;transform:perspective(1000px) rotateX(var(--rotate-x,0deg)) rotateY(var(--rotate-y,0deg)) skew(var(--skew-x,0deg),var(--skew-y,0deg));line-height:1.2;padding-bottom:.75rem;margin-bottom:.5rem}
-        .title-container:hover .title-text{animation-duration:5s;transform:perspective(1000px) rotateX(var(--rotate-x,0deg)) rotateY(var(--rotate-y,0deg)) skew(var(--skew-x,0deg),var(--skew-y,0deg)) scale(1.04)}
-        @keyframes gradientFlowTitle{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        #toastContainer{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;gap:.75rem;z-index:9999;max-width:22rem}
-        .toast{background:rgba(30,10,50,.95);border:1px solid;border-radius:1rem;padding:1rem 1.25rem;color:#f3e8ff;box-shadow:0 10px 25px -5px rgba(0,0,0,.7);backdrop-filter:blur(10px);transform:translateX(120%);opacity:0;transition:all .4s cubic-bezier(.34,1.6,.64,1);display:flex;align-items:center;gap:.75rem;font-size:.95rem}
-        .toast.show{transform:translateX(0);opacity:1}
-        .toast.error{border-color:#f87171;color:#fee2e2}
-        .toast-icon{font-size:1.4rem;flex-shrink:0}
-        .tab-button{padding:.75rem 1.5rem;border-radius:.75rem .75rem 0 0;background:rgba(30,10,50,.6);border:1px solid rgba(168,85,247,.3);color:#c084fc;font-weight:600;transition:all .3s}
-        .tab-button.active{background:rgba(48,20,80,.9);border-bottom:none;color:white}
-        .tab-content{display:none;background:rgba(18,5,25,.75);border:1px solid rgba(216,94,254,.18);border-radius:0 1.25rem 1.25rem 1.25rem;padding:2rem}
-        .tab-content.active{display:block}
-        .synergy-card{background:rgba(30,10,50,.7);border:1px solid #a855f7;border-radius:1rem;padding:1.5rem}
-        .synergy-score{font-size:3.5rem;font-weight:900;background:linear-gradient(90deg,#c084fc,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent}
-        table{width:100%;border-collapse:collapse;margin-top:1.5rem}
-        th,td{padding:.75rem;text-align:left;border-bottom:1px solid rgba(168,85,247,.2)}
-        th{background:rgba(48,20,80,.5);color:#c084fc}
-        tr:hover{background:rgba(48,20,80,.3)}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --epic-blue: #0E9FFF;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            width: 420px;
+            padding: 40px 36px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .logo svg {
+            width: 48px;
+            height: 48px;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+        
+        p.subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #ccc;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--epic-blue);
+            box-shadow: 0 0 0 3px rgba(14, 159, 255, 0.2);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--epic-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            background: #0b8be6;
+            transform: translateY(-1px);
+        }
+        
+        .divider {
+            margin: 30px 0;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .divider span {
+            background: rgba(255,255,255,0.08);
+            padding: 0 20px;
+        }
+        
+        .epic-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .epic-btn:hover {
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .status {
+            margin-top: 24px;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+        
+        .success { background: rgba(0, 255, 100, 0.15); color: #0f0; }
+        .error { background: rgba(255, 80, 80, 0.15); color: #ff5555; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .epic-icon {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
-<body class="flex flex-col">
-<div id="particles-js"></div>
-<div id="mainContent" class="flex-1 flex flex-col items-center px-4 py-8 relative z-10">
-    <div class="text-center mb-10 pulse-glow">
-        <div class="title-container">
-            <h1 class="title-text text-6xl md:text-7xl font-black tracking-tighter">Aerial Analytics</h1>
+<body>
+    <div class="container">
+        <div class="logo">
+            <!-- Epic Games logo (SVG) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="white">
+                <path d="M100 20 L180 60 L180 140 L100 180 L20 140 L20 60 Z" fill="#0E9FFF"/>
+                <path d="M100 40 L160 70 L160 130 L100 160 L40 130 L40 70 Z" fill="#fff"/>
+            </svg>
+            <h1>Epic Login Demo</h1>
         </div>
-        <p class="mt-2 text-base md:text-lg text-purple-300/80 font-light">Rocket League stats • Ranks • Synergy</p>
-    </div>
-    <div class="w-full max-w-5xl main-card shadow-2xl overflow-hidden">
-        <div class="flex flex-wrap gap-2 border-b border-purple-700/40 bg-gradient-to-r from-purple-950/40 to-fuchsia-950/30 px-6 pt-4">
-            <button class="tab-button active" onclick="openHomeTab('search')">Player Ranks</button>
-            <button class="tab-button" onclick="openHomeTab('synergy')">Synergy Analyzer</button>
-        </div>
-        <div id="tab-search" class="tab-content active p-8 md:p-12">
-            <div class="max-w-lg mx-auto">
-                <input id="playerInput" type="text" placeholder="Enter Epic Account ID (32 hex chars)" class="w-full bg-black/60 border-2 border-purple-900/50 rounded-2xl px-5 py-5 text-lg placeholder-purple-400/60 outline-none input-focus text-center font-mono text-purple-100 mb-6">
-                <button onclick="searchPlayer()" class="w-full purple-red-btn py-5 rounded-2xl text-lg font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg">
-                    <i class="fa-solid fa-rocket"></i> LOAD RANKS
-                </button>
-                <div class="mt-6 text-xs md:text-sm text-purple-400/60 text-center">
-                    Use a 32-character Epic Account ID
-                </div>
+        
+        <p class="subtitle">Sign in with your Epic Games account</p>
+        
+        <!-- Direct form (for demo only - NOT recommended in production) -->
+        <div id="direct-form">
+            <div class="form-group">
+                <label for="username">Email or Username</label>
+                <input type="text" id="username" placeholder="your@email.com" autocomplete="username">
             </div>
-        </div>
-        <div id="tab-synergy" class="tab-content p-8 md:p-12">
-            <h2 class="text-4xl font-black mb-8 text-center bg-gradient-to-r from-purple-400 to-fuchsia-500 bg-clip-text text-transparent">Squad Synergy Analyzer</h2>
-            <p class="text-center text-purple-300/80 mb-10 max-w-3xl mx-auto text-lg">Enter 4 Epic IDs (you + 3 teammates) to compare ranks and synergy.<br><span class="text-sm opacity-70 block mt-2">Uses real MMR data from RapidAPI</span></p>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div class="synergy-card">
-                    <h3 class="text-xl font-bold mb-5 flex items-center gap-3"><i class="fa-solid fa-users text-pink-400 text-2xl"></i> Party IDs</h3>
-                    <input id="mainId" type="text" placeholder="Your Epic ID (Player 1)" class="w-full bg-black/50 border border-purple-700 rounded-xl px-4 py-3 mb-4 text-purple-100 font-mono text-sm focus:outline-none focus:border-pink-500">
-                    <input id="teammate1" type="text" placeholder="Teammate 2 Epic ID" class="w-full bg-black/50 border border-purple-700 rounded-xl px-4 py-3 mb-4 text-purple-100 font-mono text-sm focus:outline-none focus:border-pink-500">
-                    <input id="teammate2" type="text" placeholder="Teammate 3 Epic ID" class="w-full bg-black/50 border border-purple-700 rounded-xl px-4 py-3 mb-4 text-purple-100 font-mono text-sm focus:outline-none focus:border-pink-500">
-                    <input id="teammate3" type="text" placeholder="Teammate 4 Epic ID" class="w-full bg-black/50 border border-purple-700 rounded-xl px-4 py-3 text-purple-100 font-mono text-sm focus:outline-none focus:border-pink-500">
-                    <button onclick="comparePartyRanks()" class="mt-6 w-full purple-red-btn py-4 rounded-xl font-bold flex items-center justify-center gap-3 text-lg">
-                        <i class="fa-solid fa-chart-network"></i> COMPARE RANKS & SYNERGY
-                    </button>
-                </div>
-                <div>
-                    <div id="partyComparisonResults" class="min-h-[300px] flex items-center justify-center text-purple-400/70 text-center text-lg">
-                        Enter 4 valid Epic IDs and click Compare Ranks & Synergy
-                    </div>
-                </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
             </div>
+            
+            <button onclick="attemptDirectLogin()" class="login-btn">Sign in with Epic</button>
+            
+            <div class="divider"><span>or</span></div>
         </div>
-    </div>
-</div>
-<div id="playerPage" class="hidden relative z-10">
-    <div class="max-w-5xl mx-auto px-5 pt-8 pb-12">
-        <button onclick="showMainPage()" class="mb-8 flex items-center gap-3 text-purple-300 hover:text-white text-base transition hover:scale-105 purple-red-btn px-5 py-2 rounded-xl text-sm font-medium">
-            <i class="fa-solid fa-arrow-left-long"></i> Back to Home
+        
+        <!-- Recommended OAuth button -->
+        <button onclick="startOAuthFlow()" class="epic-btn">
+            <svg class="epic-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4V7m-4 4V7" />
+            </svg>
+            Continue with Epic Games (Recommended)
         </button>
-        <div id="playerHeader" class="main-card p-7 md:p-9 mb-10 flex flex-col md:flex-row items-center gap-7"></div>
-        <div class="flex flex-wrap gap-2 mb-6 border-b border-purple-700/40">
-            <button class="tab-button active" onclick="openTab('ranks')">Current Ranks</button>
-            <button class="tab-button" onclick="openTab('synergy')">Synergy Analyzer</button>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="footer">
+            This is a demo page.<br>
+            <strong>⚠️ Direct username/password login is only for development and organization accounts.</strong><br>
+            Most real websites must use the OAuth redirect flow.
         </div>
-        <div id="tab-ranks" class="tab-content active">
-            <h2 class="text-3xl md:text-4xl font-black mb-6 text-center md:text-left bg-gradient-to-r from-purple-400 to-fuchsia-500 bg-clip-text text-transparent">Current Ranks</h2>
-            <div id="ranksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
-        </div>
-        <div id="tab-synergy" class="tab-content">
-            <h2 class="text-3xl md:text-4xl font-black mb-8 text-center bg-gradient-to-r from-purple-400 to-fuchsia-500 bg-clip-text text-transparent">Duo / Trio / Squad Synergy Analyzer</h2>
-            <p class="text-center text-purple-300/80 mb-10 max-w-3xl mx-auto">Analyze potential chemistry with teammates based on rank similarity, MMR proximity, and playlist focus.<br><span class="text-sm opacity-70">Currently using rank/MMR similarity</span></p>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-                <div class="synergy-card">
-                    <h3 class="text-xl font-bold mb-4 flex items-center gap-3"><i class="fa-solid fa-user-plus text-pink-400"></i> Your Teammates</h3>
-                    <input id="teammate1" type="text" placeholder="Epic ID 1 (for Duo/Trio)" class="w-full bg-black/50 border border-purple-700 rounded-xl px-4 py-3 mb-3 text-purple-100 font-mono text-sm focus:outline-none focus:border-pink-500">
-                    <input id="teammate2" type="text" placeholder="Epic ID 2 (for Trio/Squad)" class="w-full bg-black/50 border border-purple-700 rounded-xl px-4 py-3 mb-3 text-purple-100 font-mono text-sm focus:outline-none focus:border-pink-500">
-                    <input id="teammate3" type="text" placeholder="Epic ID 3 (Squad / Extra)" class="w-full bg-black/50 border border-purple-700 rounded-xl px-4 py-3 text-purple-100 font-mono text-sm focus:outline-none focus:border-pink-500">
-                    <button onclick="analyzeSynergy()" class="mt-4 w-full purple-red-btn py-3 rounded-xl font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-chart-network"></i> Analyze Synergy</button>
-                </div>
-                <div class="lg:col-span-2 space-y-6">
-                    <div id="synergyResults" class="space-y-6"></div>
-                </div>
-            </div>
-            <div class="text-sm text-purple-400/70 text-center">Synergy score = 100 – (average MMR difference normalized) – rank tier penalty.<br>Higher = better chance of smooth chemistry.</div>
-        </div>
-        <details class="mt-14 main-card p-7 text-sm">
-            <summary class="cursor-pointer flex items-center gap-3 text-purple-300 font-medium text-base"><i class="fa-solid fa-code"></i> Raw JSON Response</summary>
-            <pre id="rawJson" class="mt-5 bg-black/70 p-5 rounded-xl overflow-auto max-h-96 text-gray-200 font-mono text-xs whitespace-pre-wrap"></pre>
-        </details>
     </div>
-</div>
-<div id="loading" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-    <div class="text-center">
-        <div class="w-16 h-16 border-6 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-5"></div>
-        <p class="text-xl font-bold text-purple-400">Loading...</p>
-    </div>
-</div>
-<div id="errorModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 px-4">
-    <div class="main-card max-w-md w-full p-8 text-center">
-        <i class="fa-solid fa-triangle-exclamation text-5xl text-fuchsia-500 mb-5"></i>
-        <p id="errorText" class="text-lg leading-relaxed mb-6"></p>
-        <button onclick="hideError()" class="w-full py-4 bg-zinc-900 hover:bg-zinc-800 rounded-2xl text-base font-medium transition purple-red-btn">CLOSE</button>
-    </div>
-</div>
-<div id="toastContainer"></div>
-<script>
-particlesJS("particles-js",{"particles":{"number":{"value":60,"density":{"enable":true,"value_area":800}},"color":{"value":"#888888"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"}},"opacity":{"value":.35,"random":true,"anim":{"enable":true,"speed":1,"opacity_min":.1,"sync":false}},"size":{"value":3,"random":true,"anim":{"enable":false,"speed":40,"size_min":.1,"sync":false}},"line_linked":{"enable":false},"move":{"enable":true,"speed":.8,"direction":"none","random":true,"straight":false,"out_mode":"out","bounce":false,"attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false},"onclick":{"enable":false},"resize":true}},"retina_detect":true});
-const API_KEY="33990be289mshc6f00878fdf6e7dp1b1374jsn04f139efbd1d";
-const API_HOST="rocket-league1.p.rapidapi.com";
-window.playerData={};
-function showMainPage(){document.getElementById('playerPage').classList.add('hidden');document.getElementById('mainContent').classList.remove('hidden')}
-function showPlayerPage(){document.getElementById('mainContent').classList.add('hidden');document.getElementById('playerPage').classList.remove('hidden')}
-function showLoading(){document.getElementById('loading').classList.remove('hidden')}
-function hideLoading(){document.getElementById('loading').classList.add('hidden')}
-function showError(msg){document.getElementById('errorText').innerHTML=msg;document.getElementById('errorModal').classList.remove('hidden');hideLoading()}
-function hideError(){document.getElementById('errorModal').classList.add('hidden')}
-function showNotification(message,type='error'){const container=document.getElementById('toastContainer');const toast=document.createElement('div');toast.className=`toast ${type} flex`;let icon='fa-triangle-exclamation';let prefix='Error: ';if(type==='success'){icon='fa-circle-check';prefix='Success: '}toast.innerHTML=`<i class="fa-solid ${icon} toast-icon"></i><span>${prefix}${message}</span>`;container.appendChild(toast);setTimeout(()=>toast.classList.add('show'),10);setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),400)},5000)}
-function openHomeTab(tabName){document.querySelectorAll('.tab-button').forEach(btn=>btn.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(cont=>cont.classList.remove('active'));event.target.classList.add('active');document.getElementById(`tab-${tabName}`).classList.add('active')}
-async function fetchPlayerRanks(id){if(!/^[0-9a-fA-F]{32}$/.test(id))return null;try{const res=await fetch(`https://${API_HOST}/ranks/${id}`,{headers:{'X-RapidAPI-Key':API_KEY,'X-RapidAPI-Host':API_HOST,'Accept-Encoding':'identity','x-rapidapi-ua':'RapidAPI-Playground'}});if(!res.ok)return null;return await res.json()}catch(e){return null}}
-async function comparePartyRanks(){const results=document.getElementById('partyComparisonResults');results.innerHTML='<p class="text-center py-12 text-purple-300/70 text-xl">Fetching ranks...</p>';const ids=[document.getElementById('mainId').value.trim(),document.getElementById('teammate1').value.trim(),document.getElementById('teammate2').value.trim(),document.getElementById('teammate3').value.trim()].filter(id=>id);if(ids.length<2){results.innerHTML='<p class="text-center py-12 text-yellow-300 text-xl">Enter at least 2 valid Epic IDs</p>';return}showLoading();window.playerData={};for(const id of ids){const data=await fetchPlayerRanks(id);if(data)window.playerData[id]=data}hideLoading();if(Object.keys(window.playerData).length===0){results.innerHTML='<p class="text-center py-12 text-red-300 text-xl">No valid data found – check IDs or rate limit</p>';return}let html='<table><thead><tr><th>Player</th><th>2v2 Doubles</th><th>3v3 Standard</th></tr></thead><tbody>';let doublesMMRs=[],standardMMRs=[];Object.entries(window.playerData).forEach(([id,data])=>{const name=data.name||data.displayName||data.username||id.slice(0,8)+'...';const doubles=data.doubles||data['2v2']||{};const standard=data.standard||data['3v3']||{};const dMMR=doubles.mmr||doubles.rating||doubles.skill||'—';const sMMR=standard.mmr||standard.rating||standard.skill||'—';if(typeof dMMR==='number')doublesMMRs.push(dMMR);if(typeof sMMR==='number')standardMMRs.push(sMMR);html+=`<tr><td class="font-bold">${name}</td><td>${dMMR}</td><td>${sMMR}</td></tr>`});html+='</tbody></table>';let synergy=100;if(doublesMMRs.length>1){const avgD=doublesMMRs.reduce((a,b)=>a+b,0)/doublesMMRs.length;const devD=doublesMMRs.reduce((a,b)=>a+Math.abs(b-avgD),0)/doublesMMRs.length;synergy-=Math.min(40,devD/20)}if(standardMMRs.length>1){const avgS=standardMMRs.reduce((a,b)=>a+b,0)/standardMMRs.length;const devS=standardMMRs.reduce((a,b)=>a+Math.abs(b-avgS),0)/standardMMRs.length;synergy-=Math.min(40,devS/30)}synergy=Math.max(20,Math.round(synergy));const color=synergy>=85?'text-green-400':synergy>=65?'text-yellow-400':'text-red-400';html+=`<div class="text-center mt-8"><div class="text-6xl font-black ${color}">${synergy}</div><div class="text-xl font-bold">Party Synergy Score</div><p class="text-sm opacity-70 mt-2">(Higher = closer MMRs → better chemistry potential)</p></div>`;results.innerHTML=html}
-async function searchPlayer(){let id=document.getElementById('playerInput').value.trim().replace(/\s/g,'');if(!id){showNotification("Please enter an Epic Account ID","error");return}if(!/^[0-9a-fA-F]{32}$/.test(id)){showNotification("Invalid format.<br>Must be exactly 32 hexadecimal characters.","error");return}showLoading();try{const ranksUrl=`https://${API_HOST}/ranks/${id}`;const ranksRes=await fetch(ranksUrl,{headers:{'X-RapidAPI-Key':API_KEY,'X-RapidAPI-Host':API_HOST,'Accept-Encoding':'identity','x-rapidapi-ua':'RapidAPI-Playground'}});if(!ranksRes.ok){if(ranksRes.status===404)showNotification("Player not found.<br>Check the Epic ID.","error");else if(ranksRes.status===429)showNotification("Rate limit reached.<br>Try again later.","error");else showNotification(`Error ${ranksRes.status}`,"error");hideLoading();return}const data=await ranksRes.json();window.currentData=data;const playerName=data.name||data.displayName||data.username||"Player";renderProfile(data,id,playerName);showPlayerPage();openTab('ranks')}catch(err){showNotification("Failed to connect.<br>Try again later.","error")}finally{hideLoading()}}
-function getRankClass(rankName){rankName=rankName.toLowerCase();if(rankName.includes('bronze'))return'rank-bronze';if(rankName.includes('silver'))return'rank-silver';if(rankName.includes('gold'))return'rank-gold';if(rankName.includes('platinum'))return'rank-platinum';if(rankName.includes('diamond'))return'rank-diamond';if(rankName.includes('champion'))return'rank-champion';if(rankName.includes('grand champion'))return'rank-grand';if(rankName.includes('supersonic legend'))return'rank-legend';return'rank-default'}
-function renderProfile(data,id,forcedName=null){const header=document.getElementById('playerHeader');const grid=document.getElementById('ranksGrid');const raw=document.getElementById('rawJson');raw.textContent=JSON.stringify(data,null,2);let name=forcedName||data.name||data.displayName||data.username||"Player";header.innerHTML=`<div class="w-28 h-28 bg-gradient-to-br from-purple-700 to-fuchsia-800 rounded-2xl flex items-center justify-center text-6xl shadow-xl flex-shrink-0">🚀</div><div class="text-center md:text-left w-full min-w-0"><div class="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent break-words">${name}</div><div class="mt-3 flex flex-wrap items-center gap-3 justify-center md:justify-start"><span class="px-4 py-1.5 bg-purple-950/60 text-purple-300 font-mono rounded-xl text-xs whitespace-nowrap">EPIC ID</span><span class="text-purple-400/70 font-mono text-xs break-all">${id}</span></div></div>`;grid.innerHTML='';let playlists={};if(data&&typeof data==='object'){Object.keys(data).forEach(k=>{const v=data[k];if(v&&typeof v==='object'&&(v.mmr||v.rank||v.tier)){playlists[k]=v}})}if(Object.keys(playlists).length===0&&data.ranks)playlists=data.ranks;if(Object.keys(playlists).length===0){grid.innerHTML=`<div class="col-span-full text-center py-16 text-purple-400/50 text-xl">No rank data available</div>`;return}const tierOffsets={"unranked":0,"bronze":1,"silver":4,"gold":7,"platinum":10,"diamond":13,"champion":16,"grand champion":19,"supersonic legend":22};Object.entries(playlists).forEach(([key,stats])=>{const modeTitle=key.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase()).replace('Duel','1v1 Duel').replace('Doubles','2v2 Doubles').replace('Standard','3v3 Standard').replace('Hoops','Hoops').replace('Rumble','Rumble').replace('Dropshot','Dropshot').replace('Snowday','Snow Day');let rankLower=(stats.rank||stats.tier_name||stats.tier||'Unranked').toLowerCase();let division=stats.division||stats.div||1;if(division>4)division=4;if(division<1)division=1;let rankDisplay=rankLower.charAt(0).toUpperCase()+rankLower.slice(1);if(division>0&&!rankLower.includes('legend')){rankDisplay+=` ${romanNumeral(division)}`}let mmr=stats.mmr||stats.skill||stats.rating||'—';let streak=stats.winStreak||stats.streak||'—';let baseNum=tierOffsets.unranked;for(let t in tierOffsets){if(rankLower.includes(t)){baseNum=tierOffsets[t];break}}let imgNum=baseNum+(division-1);let icon=`https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-${imgNum}.png`;const fallbackIcon='https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-0.png';const themeClass=getRankClass(rankLower);const card=`<div class="rank-card ${themeClass} p-6 md:p-7"><div class="text-xs uppercase tracking-widest opacity-90 mb-2 text-center">${modeTitle}</div><div class="text-2xl md:text-3xl font-black text-center mb-4">${rankDisplay}</div><div class="flex flex-col items-center gap-5"><img src="${icon}" alt="${rankLower}" class="rank-icon flex-shrink-0" onerror="this.onerror=null; this.src='${fallbackIcon}';"><div class="text-center mt-2"><div class="text-4xl md:text-5xl font-mono font-black">${mmr}</div><div class="text-xs opacity-70 tracking-wider">MMR</div></div></div><div class="mt-6 text-center"><div class="bg-black/35 rounded-xl p-4 inline-block min-w-[140px]"><div class="text-xs opacity-80 mb-1">STREAK</div><div class="text-2xl font-mono flex justify-center items-center gap-2">${streak} ${streak>0?'<span class="text-pink-300">🔥</span>':''}</div></div></div></div>`;grid.innerHTML+=card})}
-function romanNumeral(n){const roman=['','I','II','III','IV'];return roman[n]||n}
-function openTab(tabName){document.querySelectorAll('.tab-button').forEach(btn=>btn.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(cont=>cont.classList.remove('active'));event.target.classList.add('active');document.getElementById(`tab-${tabName}`).classList.add('active')}
-function analyzeSynergy(){const resultsDiv=document.getElementById('synergyResults');resultsDiv.innerHTML='<p class="text-center py-8 text-purple-300/70">Analyzing...</p>';const data=window.currentData||{};const mmrs={doubles:data.doubles?.mmr||data['2v2']?.mmr||data.ranks?.doubles?.mmr||0,standard:data.standard?.mmr||data['3v3']?.mmr||data.ranks?.standard?.mmr||0};const teammates=[document.getElementById('teammate1').value.trim(),document.getElementById('teammate2').value.trim(),document.getElementById('teammate3').value.trim()].filter(id=>id&&/^[0-9a-fA-F]{32}$/.test(id));if(teammates.length===0){resultsDiv.innerHTML='<p class="text-center py-8 text-yellow-300">Enter at least one valid Epic ID to analyze.</p>';return}let html='';if(mmrs.doubles>0){const avgDiff=Math.floor(Math.random()*80-40);const score=Math.max(40,100-Math.abs(avgDiff*.8));html+=createSynergyCard('Duo (2v2 Doubles)',score,mmrs.doubles,teammates.length>=1?teammates[0]:'—')}if(mmrs.standard>0){const avgDiff=Math.floor(Math.random()*120-60);const score=Math.max(35,100-Math.abs(avgDiff*.7));html+=createSynergyCard('Trio (3v3 Standard)',score,mmrs.standard,teammates.slice(0,2).join(', ')||'—')}html+=createSynergyCard('Squad (Extra Modes / General)',72,'—',teammates.join(', ')||'—');resultsDiv.innerHTML=html||'<p class="text-center py-8 text-purple-300/70">No relevant playlist MMR found for synergy calculation.</p>'}
-function createSynergyCard(title,score,yourMMR,mates){const color=score>=85?'text-green-400':score>=70?'text-yellow-400':'text-red-400';return`<div class="synergy-card"><div class="flex justify-between items-start mb-4"><div><h4 class="text-xl font-bold">${title}</h4><p class="text-sm text-purple-300/70">Teammates: ${mates}</p></div><div class="text-right"><div class="synergy-score ${color}">${score}</div><div class="text-xs opacity-70">Synergy</div></div></div><div class="text-sm opacity-80">Your ${title.split(' ')[1]||'MMR'}: <strong>${yourMMR||'—'}</strong><br>Verdict: ${score>=85?'Strong synergy – very similar skill level':score>=70?'Good potential – minor adjustments needed':'Challenging – large skill gap'}</div></div>`}
-document.addEventListener('DOMContentLoaded',()=>{const titleContainer=document.querySelector('.title-container');const titleText=document.querySelector('.title-text');if(!titleContainer||!titleText)return;titleContainer.addEventListener('mousemove',e=>{const rect=titleContainer.getBoundingClientRect();const x=(e.clientX-rect.left-rect.width/2)/(rect.width/2);const y=(e.clientY-rect.top-rect.height/2)/(rect.height/2);const skewX=x*8+'deg';const skewY=-y*4+'deg';const rotateY=x*10+'deg';const rotateX=-y*8+'deg';titleText.style.setProperty('--skew-x',skewX);titleText.style.setProperty('--skew-y',skewY);titleText.style.setProperty('--rotate-x',rotateX);titleText.style.setProperty('--rotate-y',rotateY)});titleContainer.addEventListener('mouseleave',()=>{titleText.style.setProperty('--skew-x','0deg');titleText.style.setProperty('--skew-y','0deg');titleText.style.setProperty('--rotate-x','0deg');titleText.style.setProperty('--rotate-y','0deg')})})
-document.getElementById('playerInput').addEventListener('keypress',e=>{if(e.key==='Enter')searchPlayer()})
-</script>
+
+    <script>
+        // === CONFIGURATION ===
+        // You MUST replace these with your own values from https://dev.epicgames.com/portal
+        const CLIENT_ID = "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP";           // ← Change this
+        const REDIRECT_URI = "http://localhost:3000/callback"; // Must match what you registered in Epic Portal
+        const DEPLOYMENT_ID = "YOUR_DEPLOYMENT_ID_HERE";   // Optional but recommended for full access
+        
+        // Authorization URL (official)
+        const AUTH_URL = "https://www.epicgames.com/id/authorize";
+        
+        // Token endpoint
+        const TOKEN_URL = "https://api.epicgames.dev/epic/oauth/v2/token";
+        
+        function showStatus(message, type = "error") {
+            const statusEl = document.getElementById("status");
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = "block";
+            
+            setTimeout(() => {
+                statusEl.style.display = "none";
+            }, 8000);
+        }
+        
+        // === RECOMMENDED WAY: OAuth 2.0 Authorization Code Flow ===
+        function startOAuthFlow() {
+            if (CLIENT_ID === "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP") {
+                alert("Please replace CLIENT_ID and REDIRECT_URI with your real Epic developer credentials!");
+                return;
+            }
+            
+            const state = btoa(Math.random().toString()).slice(0, 32); // CSRF protection
+            sessionStorage.setItem("oauth_state", state);
+            
+            const params = new URLSearchParams({
+                client_id: CLIENT_ID,
+                response_type: "code",
+                scope: "basic_profile friends_list",
+                redirect_uri: REDIRECT_URI,
+                state: state
+            });
+            
+            window.location.href = `${AUTH_URL}?${params.toString()}`;
+        }
+        
+        // === DIRECT PASSWORD GRANT (DEVELOPMENT ONLY - WILL FAIL FOR 99% OF ACCOUNTS) ===
+        async function attemptDirectLogin() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            
+            if (!username || !password) {
+                showStatus("Please enter email/username and password", "error");
+                return;
+            }
+            
+            if (CLIENT_ID === "xyza7891Qj96f6zQofNHQ0ExVjK4zFCP") {
+                showStatus("Replace CLIENT_ID first!", "error");
+                return;
+            }
+            
+            showStatus("Attempting login (development mode only)...", "error");
+            
+            const formData = new URLSearchParams();
+            formData.append("grant_type", "password");
+            formData.append("username", username);
+            formData.append("password", password);
+            formData.append("scope", "basic_profile");
+            if (DEPLOYMENT_ID !== "YOUR_DEPLOYMENT_ID_HERE") {
+                formData.append("deployment_id", DEPLOYMENT_ID);
+            }
+            
+            try {
+                const response = await fetch(TOKEN_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Authorization": "Basic " + btoa(CLIENT_ID + ":") // client_secret can be empty for some clients
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.access_token) {
+                    showStatus(`✅ Login successful! Account ID: ${data.account_id || "unknown"}`, "success");
+                    console.log("Epic Access Token:", data.access_token);
+                    console.log("Full response:", data);
+                    
+                    // You can now use the token to call Epic APIs
+                } else {
+                    showStatus(data.error_description || data.error || "Login failed (most likely 2FA enabled or not an org account)", "error");
+                }
+            } catch (err) {
+                showStatus("Network error - " + err.message, "error");
+            }
+        }
+        
+        // Auto-check for callback (in a real app you would have a separate /callback page)
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get("code");
+            const state = urlParams.get("state");
+            const error = urlParams.get("error");
+            
+            if (error) {
+                showStatus("Epic returned error: " + error, "error");
+            } else if (code && state) {
+                if (state === sessionStorage.getItem("oauth_state")) {
+                    showStatus("✅ Authorization code received! In a real app, exchange it for a token on your backend now.", "success");
+                    console.log("Authorization Code:", code);
+                    // In production: send code to your server to exchange for access_token
+                } else {
+                    showStatus("State mismatch - possible CSRF attack", "error");
+                }
+            }
+        };
+        
+        // Demo tip
+        console.log("%c🚀 Epic Games Login Demo Ready!\n\n1. Get your Client ID at https://dev.epicgames.com/portal\n2. Replace CLIENT_ID and REDIRECT_URI\n3. For real websites → always use the blue 'Continue with Epic Games' button (OAuth flow)\n4. Direct password login only works for dev/org accounts without 2FA", "color:#0E9FFF; font-family:monospace");
+    </script>
 </body>
 </html>
